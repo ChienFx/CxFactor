@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">CX Factor</string>
+    <string name="title_activity_login">Login</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+
+    <string name="forgot_password"><u><b>Forgot Password ?</b></u></string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="username_or_email">Email</string>
+    <string name="login_with_fb">Login with Facebook</string>
+    <string name="login_with_google">Login with Google      </string>
+    <string name="term_policy"><u><b>Terms and Privacy Policy</b></u></string>
+
+
+    <!--SMS-->
+    <string name="action_ok">OK</string>
+    <string name="action_send_normal_sms">Send normal SMS</string>
+    <string name="action_send_condition_sms">Send Condition SMS</string>
+
+    <string name="your_cellphone_number">Your cellphone number:</string>
+    <string name="phone_number_hint">912345678</string>
+    <string name="toast_sending_sms">Sending sms…</string>
+
+    <string name="permission_alert_dialog_title">Requesting SMS permission</string>
+    <string name="permission_dialog_message">The app will now request your permission to send and read SMS related services.</string>
+
+    <string name="error_invalid_phone_number">Invalid phone number</string>
+    <string name="register">Register</string>
+    <string name="confim_password">Confim Password</string>
+    <string name="minimum_password">Password too short, enter minimum 6 characters!</string>
+    <string name="auth_failed">Authentication failed. Your email might have been existence!</string>
+
+
+</resources>
