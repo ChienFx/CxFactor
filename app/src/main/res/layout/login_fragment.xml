@@ -91,6 +91,7 @@
             android:layout_marginBottom="5dp"
             />
     </RelativeLayout>
+
     <TextView
         android:id="@+id/tvTermPolicy"
         style="@style/text_default_style"

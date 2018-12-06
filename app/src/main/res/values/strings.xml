@@ -1,4 +1,7 @@
 <resources>
+    <string name="facebook_app_id">376681732903684</string>
+    <string name="fb_login_protocol_scheme">fb376681732903684</string>
+
     <string name="app_name">CX Factor</string>
     <string name="title_activity_login">Login</string>
     <!-- Strings related to login -->

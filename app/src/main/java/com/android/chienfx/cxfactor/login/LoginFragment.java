@@ -21,11 +21,14 @@ import com.android.chienfx.core.Definition;
 import com.android.chienfx.core.IntentCode;
 import com.android.chienfx.core.MyHelper;
 import com.android.chienfx.cxfactor.R;
+import com.facebook.login.LoginManager;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 @SuppressLint("ValidFragment")
 public class LoginFragment extends Fragment implements View.OnClickListener {
-
-
     View viewInstance;
     Login loginInstance;
     TextView tvForgotPassword;
@@ -37,6 +40,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     String strUsername, strPassword;
 
     Boolean checkUsername = false, checkPassword = false;
+    private boolean checkLoginWithThirdOrg = false;
+
     @SuppressLint("ValidFragment")
     public LoginFragment(Login login) {
         this.loginInstance = login;
@@ -97,7 +102,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         edPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus && !checkPassword)
+                if(!hasFocus && !checkPassword && !checkLoginWithThirdOrg)
                     MyHelper.toast(getContext(), "Password is at least "+ String.valueOf(Definition.MINIMUM_PASSWORD_LENGTH)+" characters");
             }
         });
@@ -126,10 +131,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             @Override
             public void afterTextChanged(Editable s) {}
         });
+
         edUsername.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus && !checkUsername)
+                if(!hasFocus && !checkUsername && !checkLoginWithThirdOrg)
                     MyHelper.toast(getContext(), "Email is invalid.");
             }
         });
@@ -140,9 +146,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         tvTerm = viewInstance.findViewById(R.id.tvTermPolicy);
         btnLogin = viewInstance.findViewById(R.id.btnLogin);
         btnLogin.setEnabled(false);
-        relLoginWithFacebook = viewInstance.findViewById(R.id.relLoginWithFacebook);
-        relLoginWithGoogle = viewInstance.findViewById(R.id.relLoginWithGoogle);
+
         edUsername = viewInstance.findViewById(R.id.edLoginUsername);
+        relLoginWithGoogle = viewInstance.findViewById(R.id.relLoginWithGoogle);
+        relLoginWithFacebook = viewInstance.findViewById(R.id.relLoginWithFacebook);
+
     }
 
     private void changeLoginButtonState() {
@@ -162,11 +170,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 loginInstance.loginWithEmailAndPassword(strUsername, strPassword);
                 break;
             case R.id.relLoginWithFacebook:
-                //login with fb
-                //loginInstance.loginWithGoogle(IntentCode.RESULT_LOGIN_SUCCESSFUL, "Login with Facebook");
+                checkLoginWithThirdOrg = true;
+                LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("email", "public_profile", "user_friends") );
                 break;
             case R.id.relLoginWithGoogle:
-                //login with gg
+                checkLoginWithThirdOrg = true;
                 loginInstance.loginWithGoogle();
                 break;
             case R.id.tvForgotPassword:
@@ -176,6 +184,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             case R.id.tvTermPolicy:
                 MyHelper.toast(getContext(), "This should open web browser to see term polycy!");
                 break;
+            case R.id.edLoginUsername: case R.id.edLoginPassword:
+                checkLoginWithThirdOrg = false;
         }
     }
 }

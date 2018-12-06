@@ -16,6 +16,14 @@ import com.android.chienfx.core.IntentCode;
 import com.android.chienfx.core.MyHelper;
 import com.android.chienfx.cxfactor.MainActivity;
 import com.android.chienfx.cxfactor.R;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -25,6 +33,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -40,6 +49,7 @@ public class Login extends AppCompatActivity{
 
     FirebaseAuth auth;
     GoogleSignInClient mGoogleSignInClient;
+    private CallbackManager mCallbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +65,67 @@ public class Login extends AppCompatActivity{
     }
 
     private void initFirebaseEnviroment() {
+
+        initFirebaseGoogleSignin();
+
+        initFirebaseFacebookSignin();
+
+
+
+        // [START initialize_auth]
+        // Initialize Firebase Auth
+        auth = FirebaseAuth.getInstance();
+        // [END initialize_auth]
+    }
+
+    private void initFirebaseFacebookSignin() {
+        FacebookSdk.sdkInitialize(this.getApplicationContext());
+
+        mCallbackManager = CallbackManager.Factory.create();
+
+        LoginManager.getInstance().registerCallback(mCallbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        Log.d("Success", "Login");
+                        //MyHelper.toast(getApplicationContext(), "Facebook Login Success");
+                        handleFacebookAccessToken(loginResult.getAccessToken());
+                    }
+                    @Override
+                    public void onCancel() {
+                        MyHelper.toast(getApplicationContext(), "Facebook Login Cancel");
+                    }
+
+                    @Override
+                    public void onError(FacebookException exception) {
+                        MyHelper.toast(getApplicationContext(), "Facebook Login Error: "+ exception.getMessage());
+                    }
+                });
+    }
+
+    private void handleFacebookAccessToken(AccessToken token) {
+        Log.d(TAG, "handleFacebookAccessToken:" + token);
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        auth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            finishLoginActivity(IntentCode.RESULT_LOGIN_SUCCESSFUL, "Logined in with facebook");
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            MyHelper.toast(getBaseContext(), "Authentication failed. Your email might existed.");
+                        }
+                    }
+                });
+    }
+
+    private void initFirebaseGoogleSignin() {
         // [START config_signin]
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -64,11 +135,6 @@ public class Login extends AppCompatActivity{
         // [END config_signin]
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-        // [START initialize_auth]
-        // Initialize Firebase Auth
-        auth = FirebaseAuth.getInstance();
-        // [END initialize_auth]
     }
 
     private void registerViews() {
@@ -116,7 +182,6 @@ public class Login extends AppCompatActivity{
         finish(); //finish this activity with resultcode returned
     }
 
-
     public void createUserWithEmailAndPasswor(String strEmail, final String strPassword) {
         auth.createUserWithEmailAndPassword(strEmail, strPassword)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -160,6 +225,9 @@ public class Login extends AppCompatActivity{
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        if(mCallbackManager.onActivityResult(requestCode, resultCode, data)) {
+            return;
+        }
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == IntentCode.REQUEST_LOGIN_WITH_GOOGLE) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
@@ -192,7 +260,7 @@ public class Login extends AppCompatActivity{
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            MyHelper.toast(getBaseContext(), "FirebaseGoogle Login Failed");
+                            MyHelper.toast(getBaseContext(), "Firebase Google Account Authentication failed. Your email might existed.");
                         }
                     }
                 });
