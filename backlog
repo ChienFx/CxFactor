@@ -1,0 +1,18 @@
+- Bắt tin nhắn đến và trả lời tự động:
+    - bỏ qua nếu người gửi trong blacklist
+    - bỏ qua nếu nội dung tin nhắn đến có các từ spam quảng cáo
+
+- Trong lần sử dụng đầu tiên, người dùng nên đồng ý tất cả các permission và chọn "Never ask later" để có thể sử dụng tất cả các tính năng của ứng dung.
+Người dừng có thể tắt các permission bất kì lúc nào bằng cách vào application’s Settings.
+- Các quyền được yêu cầu bao gồm:
+    +       GET_ACCOUNTS: để đăng nhập bằng tài khoảng Google
+            READ_PROFILE: phục vụ mục đích đăng nhập bằng tài khoảng Google
+            READ_CONTACTS: phục vụ chức năng tự động trả lời cuộc gọi bằng SMS, tự động trả lời SMS
+
+            RECEIVE_SMS: phục vụ chức năng tự động trả lời SMS
+            READ_SMS: phục vụ chức năng tự động trả lời SMS
+            SEND_SMS: phục vụ chức năng tự động trả lời SMS
+
+            INTERNET: phục vụ việc đẩy dữ liệu GPS lên server
+
+- Mọi dữ liệu ứng dụng sử dụng đều dùng với mục đích đảm bảo an toàn cho người dùng, nếu không tin tưởng ứng dụng, vui lòng gỡ ứng dụng. Xin cảm ơn.

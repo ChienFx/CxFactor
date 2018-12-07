@@ -88,14 +88,8 @@ public class ResetPasswordActivity extends AppCompatActivity {
         btnResetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressBar.setVisibility(View.VISIBLE);
                 String strEmail = edEmail.getText().toString().trim();
-                if(strEmail.isEmpty())
-                {
-                    MyHelper.toast(getApplicationContext(), "Enter your Email Address!");
-                    return;
-                }
-
-
                 auth.sendPasswordResetEmail(strEmail)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
@@ -106,9 +100,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
                                 else {
                                     MyHelper.toast(getApplicationContext(), "We have sent you instructions to reset password!");
                                 }
-                                progressBar.setVisibility(View.GONE);
                             }
                         });
+                progressBar.setVisibility(View.GONE);
             }
         });
     }
@@ -119,6 +113,6 @@ public class ResetPasswordActivity extends AppCompatActivity {
         btnBack = findViewById(R.id.btnBack);
         progressBar = findViewById(R.id.progressBarResetPassword);
         btnResetPassword.setEnabled(false);
-        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
     }
 }

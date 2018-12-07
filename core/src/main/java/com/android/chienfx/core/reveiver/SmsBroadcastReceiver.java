@@ -1,4 +1,4 @@
-package com.android.chienfx.core.sms;
+package com.android.chienfx.core.reveiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,30 +9,29 @@ import android.util.Log;
 
 
 import com.android.chienfx.core.MyHelper;
+import com.android.chienfx.core.user.User;
 
 /**
  * A broadcast receiver who listens for incoming SMS
  */
 public class SmsBroadcastReceiver extends BroadcastReceiver {
-
-    private static final String TAG = "SmsBroadcastReceiver";
-
     @Override
     public void onReceive(Context context, Intent intent) {
+
         if (intent.getAction().equals(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)) {
             String smsSender = "";
             String smsBody = "";
+
             for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
+                if(smsMessage == null)
+                    break;
                 smsBody += smsMessage.getMessageBody();
+                smsSender += smsMessage.getOriginatingAddress();
             }
 
-            if (smsBody.startsWith(SMSHelper.SMS_CONDITION)) {
-                Log.d(TAG, "Sms with condition detected");
-                MyHelper.toast(context, "BroadcastReceiver caught conditional SMS: " + smsBody);
-            }
-            SMSHelper.sendDebugSMS(smsSender, "Auto reply message :))");
-            MyHelper.toast(context, "SMS detected: From " + smsSender + " With text " + smsBody);
-            Log.d(TAG, "SMS detected: From " + smsSender + " With text " + smsBody);
+            Log.d("SMS income: ", smsBody);
+            //SMSHelper.replySMS()
+            User.getInstance().replyInComeSMS(smsSender, smsBody);
         }
     }
 }

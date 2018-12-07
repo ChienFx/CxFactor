@@ -32,10 +32,10 @@
         android:text="This message is sent from CxFactor!"
         />
     <Button
-        android:id="@+id/btn_send_sms"
+        android:id="@+id/btnLogout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send SMS"/>
+        android:text="Log out"/>
     <TextView
         android:id="@+id/tvError"
         android:layout_width="match_parent"
