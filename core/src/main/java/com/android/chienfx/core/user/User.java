@@ -1,15 +1,15 @@
 package com.android.chienfx.core.user;
 
+import android.location.Location;
 import android.text.format.Time;
 import android.util.Log;
 
 import com.android.chienfx.core.Definition;
-import com.android.chienfx.core.MyHelper;
 import com.android.chienfx.core.sms.SMSHelper;
 import com.android.chienfx.core.sms.SMSReplierRecord;
 
 import java.util.ArrayList;
-import java.util.List;
+
 public class User {
 
     private static final User ourInstance = new User();
@@ -19,12 +19,24 @@ public class User {
 
     public ArrayList<SMSReplierRecord> mSMSReplierRecords;
     public ArrayList<String> mBlacklistNumbers; // detect sms and cancel (not reply)
+    public ArrayList<String> mCloseFriends;
     public ArrayList<String> mLogs;
+    public String mEmergencyMessage;
+    public boolean mFlagSendLocation;
+    public Location mLastKnownLocation;
 
     private User() {
         mSMSReplierRecords= new ArrayList<>();
         mBlacklistNumbers = new ArrayList<>();
+        mCloseFriends = new ArrayList<>();
         mLogs = new ArrayList<>();
+        mFlagSendLocation = false;
+        mEmergencyMessage = Definition.DEFAULT_EMERGENCY_MESSAGE;
+    }
+
+    private String createLocationLink() {
+        return "http://maps.google.com/?q=" + mLastKnownLocation.getLatitude() + "," + mLastKnownLocation.getLongitude();
+        //http://maps.google.com/maps?t=m&q=49.220634+16.647762
     }
 
     public void addSMSReplierRecord(Time start, Time end, String content){
@@ -74,5 +86,24 @@ public class User {
             if(s.compareTo(smsSender)==0)
                 return true;
         return false;
+    }
+
+    public void sendEmergencySMS() {
+        String strSMS = getEmergencySMS();
+        String strLog;
+        for(String friend: mCloseFriends){
+            this.replyInComeSMS(friend, strSMS);
+            strLog = "[Emergency SMS sent to " + friend;
+            mLogs.add(strLog);
+        }
+        //upload Log to firebase
+
+    }
+
+    private String getEmergencySMS() {
+        String str = this.mEmergencyMessage;
+        if(mFlagSendLocation)
+            str+="My location is: " + createLocationLink();
+        return str;
     }
 }

@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -36,6 +37,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     Button btnLogin;
     RelativeLayout relLoginWithFacebook, relLoginWithGoogle;
     EditText edUsername, edPassword;
+    protected ProgressBar progressBar;
 
     String strUsername, strPassword;
 
@@ -83,7 +85,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String strPass = String.valueOf(edPassword.getText()).trim();
-                if(strPass.length() > Definition.MINIMUM_PASSWORD_LENGTH) {
+                if(strPass.length() >= Definition.MINIMUM_PASSWORD_LENGTH) {
                     checkPassword = true;
                     edPassword.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_password,0, 0,0);
                 }
@@ -150,7 +152,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         edUsername = viewInstance.findViewById(R.id.edLoginUsername);
         relLoginWithGoogle = viewInstance.findViewById(R.id.relLoginWithGoogle);
         relLoginWithFacebook = viewInstance.findViewById(R.id.relLoginWithFacebook);
-
+        progressBar = viewInstance.findViewById(R.id.progressBarLogin);
     }
 
     private void changeLoginButtonState() {
@@ -165,15 +167,18 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
         switch (v.getId()){
             case R.id.btnLogin:
+                progressBar.setVisibility(View.VISIBLE);
                 strUsername = edUsername.getText().toString().trim();
                 strPassword = edPassword.getText().toString().trim();
                 loginInstance.loginWithEmailAndPassword(strUsername, strPassword);
                 break;
             case R.id.relLoginWithFacebook:
+                progressBar.setVisibility(View.VISIBLE);
                 checkLoginWithThirdOrg = true;
                 LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("email", "public_profile", "user_friends") );
                 break;
             case R.id.relLoginWithGoogle:
+                progressBar.setVisibility(View.VISIBLE);
                 checkLoginWithThirdOrg = true;
                 loginInstance.loginWithGoogle();
                 break;
@@ -184,6 +189,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             case R.id.tvTermPolicy:
                 MyHelper.toast(getContext(), "This should open web browser to see term polycy!");
                 break;
+
             case R.id.edLoginUsername: case R.id.edLoginPassword:
                 checkLoginWithThirdOrg = false;
         }

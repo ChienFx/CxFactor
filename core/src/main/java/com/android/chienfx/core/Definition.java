@@ -12,6 +12,9 @@ public final class Definition {
     public static final List<String> spamSMSKeywords = Arrays.asList("[QC]", "VIETTEL", "viettel", "trúng thưởng", "1900");
 
     public static final int REQUEST_PERMISSION_CODE = 103;
+    public static final String DEFAULT_EMERGENCY_MESSAGE = "I am in the emergency situation, please help me !" ;
+    public static final String SIGNATURE = "\n[Automatic SMS form CxFator]";
+
 
     public static String[] PERMISSIONS = {
             Manifest.permission.READ_SMS,

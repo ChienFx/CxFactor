@@ -16,3 +16,10 @@ Người dừng có thể tắt các permission bất kì lúc nào bằng cách
             INTERNET: phục vụ việc đẩy dữ liệu GPS lên server
 
 - Mọi dữ liệu ứng dụng sử dụng đều dùng với mục đích đảm bảo an toàn cho người dùng, nếu không tin tưởng ứng dụng, vui lòng gỡ ứng dụng. Xin cảm ơn.
+
+
+
+- backlog
++ set default avatar for user registered by email
++ write policy
++ about me activity

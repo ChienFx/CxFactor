@@ -187,22 +187,6 @@ public class SignupFragment extends Fragment implements View.OnClickListener {
                 strPassword = edPassword.getText().toString().trim();
                 strConfirmPassword = edPasswordConfirm.getText().toString().trim();
 
-                //register here
-                if (TextUtils.isEmpty(strEmail)) {
-                    MyHelper.toast(getContext(), "Enter email address!");
-                    return;
-                }
-
-                if (strPassword.length() < 6) {
-                    MyHelper.toast(getContext(), "Password too short, enter minimum 6 characters!");
-                    return;
-                }
-
-                if(strPassword.compareTo(strConfirmPassword)!=0){
-                    MyHelper.toast(getContext(), "Confirm Password is not match!");
-                    return;
-                }
-
                 progressBar.setVisibility(View.VISIBLE);
                 loginInstance.createUserWithEmailAndPasswor(strEmail, strPassword);
 

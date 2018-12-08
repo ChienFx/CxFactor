@@ -72,6 +72,7 @@
         android:background="@color/yellow"
         android:textStyle="bold"
         />
+
     <ProgressBar
         android:id="@+id/progressBarSignUp"
         android:layout_width="40dp"

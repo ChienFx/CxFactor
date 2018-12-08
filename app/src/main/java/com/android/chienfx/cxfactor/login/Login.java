@@ -3,7 +3,6 @@ package com.android.chienfx.cxfactor.login;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +13,6 @@ import android.widget.Toast;
 
 import com.android.chienfx.core.IntentCode;
 import com.android.chienfx.core.MyHelper;
-import com.android.chienfx.cxfactor.MainActivity;
 import com.android.chienfx.cxfactor.R;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -23,7 +21,6 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -35,7 +32,6 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 public class Login extends AppCompatActivity{
@@ -111,6 +107,7 @@ public class Login extends AppCompatActivity{
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        fmLogin.progressBar.setVisibility(View.GONE);
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
@@ -205,6 +202,7 @@ public class Login extends AppCompatActivity{
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        fmLogin.progressBar.setVisibility(View.GONE);
                         if(!task.isSuccessful()){
                             MyHelper.toast(getApplicationContext(), "Login failed. Check your email and password!");
                         }
@@ -253,6 +251,7 @@ public class Login extends AppCompatActivity{
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        fmLogin.progressBar.setVisibility(View.GONE);
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
