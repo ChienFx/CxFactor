@@ -2,9 +2,13 @@ package com.android.chienfx.core.user;
 
 import android.location.Location;
 import android.text.format.Time;
-import android.util.Log;
 
 import com.android.chienfx.core.Definition;
+import com.android.chienfx.core.helper.FirebaseHelper;
+import com.android.chienfx.core.history.History;
+import com.android.chienfx.core.history.HistoryEmergency;
+import com.android.chienfx.core.history.HistoryPushData;
+import com.android.chienfx.core.history.HistoryReplySMS;
 import com.android.chienfx.core.sms.SMSHelper;
 import com.android.chienfx.core.sms.SMSReplierRecord;
 
@@ -17,26 +21,32 @@ public class User {
         return ourInstance;
     }
 
-    public ArrayList<SMSReplierRecord> mSMSReplierRecords;
-    public ArrayList<String> mBlacklistNumbers; // detect sms and cancel (not reply)
-    public ArrayList<String> mCloseFriends;
-    public ArrayList<String> mLogs;
-    public String mEmergencyMessage;
-    public boolean mFlagSendLocation;
-    public Location mLastKnownLocation;
+    ArrayList<SMSReplierRecord> mSMSReplierRecords;
+    ArrayList<String> mBlackList; // detect sms and cancel (not reply)
+    ArrayList<String> mFriendsList;
+    ArrayList<History> mHistories;
+
+    String mEmergencyMessage;
+    Location mLastKnownLocation; //tracking gps
+
+    boolean mPermissionSMS;
+    boolean mPermissionGPS;
+    boolean mPermissionCall;
 
     private User() {
-        mSMSReplierRecords= new ArrayList<>();
-        mBlacklistNumbers = new ArrayList<>();
-        mCloseFriends = new ArrayList<>();
-        mLogs = new ArrayList<>();
-        mFlagSendLocation = false;
-        mEmergencyMessage = Definition.DEFAULT_EMERGENCY_MESSAGE;
+        initUser();
+    }
+
+    public boolean isEmptyFriendsList() {
+        return mFriendsList.isEmpty();
     }
 
     private String createLocationLink() {
-        return "http://maps.google.com/?q=" + mLastKnownLocation.getLatitude() + "," + mLastKnownLocation.getLongitude();
+        String strLoc = "Not found";
+        if(mLastKnownLocation!=null)
+            strLoc = "http://maps.google.com/maps?t=m&q=" + mLastKnownLocation.getLatitude() + "+" + mLastKnownLocation.getLongitude();
         //http://maps.google.com/maps?t=m&q=49.220634+16.647762
+        return strLoc;
     }
 
     public void addSMSReplierRecord(Time start, Time end, String content){
@@ -44,24 +54,54 @@ public class User {
     }
 
     public void addNumberToBlacklist(String number){
-        mBlacklistNumbers.add(number);
+        mFriendsList.remove(number);
+        mBlackList.add(number);
+    }
+
+    public void addNumberToFriendsList(String number){
+        mBlackList.remove(number);
+        mFriendsList.add(number);
     }
 
     public void replyInComeSMS(String smsSender, String smsBody){
         String strLog;
         Time tNow = new Time();
-        if(!isInBlacklist(smsSender) && checkToPassAnalysiz(smsBody)){
-            tNow.setToNow();
-            String strSMSReply = getSMSReply(tNow);
-            SMSHelper.sendDebugSMS(smsSender, strSMSReply);
-            strLog = "Replied SMS from "+smsSender+ " at "+tNow.toString();
+        if(mPermissionSMS){
+            if(!isInBlacklist(smsSender) && checkToPassAnalysiz(smsBody)){
+                tNow.setToNow();
+                String strSMSReply = getSMSReply(tNow);
+                boolean result = SMSHelper.sendDebugSMS(smsSender, strSMSReply);
+                strLog = "Replied SMS from "+smsSender+ " at "+tNow.toString();
+                writeHistory(new HistoryReplySMS(smsSender, smsBody, strSMSReply, result));
+            }
+            else{
+                writeHistory(new HistoryReplySMS(smsSender, smsBody, "In Blaclist or did not pass Analyze Ad Filter", History.ACTION_FAIL));
+            }
         }
-        else{
-            strLog = "Skipped SMS from "+smsSender+ " at "+tNow.toString();
+        else
+        {
+            writeHistory(new HistoryReplySMS(smsSender, smsBody, "Deny Permission", History.ACTION_FAIL));
         }
+    }
 
-        mLogs.add(strLog);
-        Log.d("SMSReply", "SMS detected: From " + smsSender + " With text " + smsBody);
+    private void writeHistory(History history) {
+        mHistories.add(history);
+    }
+
+    public void pushDataToServer() {
+        ////
+        boolean result = pushLocationToServer();
+        writeHistory(new HistoryPushData(HistoryPushData.PUSH_LOCATION, result));
+
+        //result = FirebaseHelper.updateUserBlacklist();
+        //
+
+    }
+
+
+
+    public boolean pushLocationToServer() {
+        return FirebaseHelper.uploadUserLocationToListOfLocation(this.mLastKnownLocation);
     }
 
     private boolean checkToPassAnalysiz(String smsBody) {
@@ -82,28 +122,66 @@ public class User {
     }
 
     private boolean isInBlacklist(String smsSender) {
-        for(String s: mBlacklistNumbers)
+        for(String s: mBlackList)
             if(s.compareTo(smsSender)==0)
                 return true;
         return false;
     }
 
-    public void sendEmergencySMS() {
+    public int sendEmergencySMS() {
         String strSMS = getEmergencySMS();
-        String strLog;
-        for(String friend: mCloseFriends){
-            this.replyInComeSMS(friend, strSMS);
-            strLog = "[Emergency SMS sent to " + friend;
-            mLogs.add(strLog);
+        int count = 0;
+        for(String friend: mFriendsList){
+            boolean result = SMSHelper.sendDebugSMS(friend, strSMS);
+            if(result) count++;
+            writeHistory(new HistoryEmergency(friend, strSMS, this.mPermissionGPS, result));
         }
-        //upload Log to firebase
-
+        return count;
     }
 
     private String getEmergencySMS() {
         String str = this.mEmergencyMessage;
-        if(mFlagSendLocation)
-            str+="My location is: " + createLocationLink();
+        if(mPermissionGPS)
+            str+="\nMy location is: " + createLocationLink();
         return str;
     }
+
+    public void initUser(){
+        mLastKnownLocation = getCurrentLocation();
+        mPermissionSMS = true;
+        mPermissionGPS = true;
+        mPermissionCall = true;
+        mEmergencyMessage = Definition.DEFAULT_EMERGENCY_MESSAGE;
+
+        mLastKnownLocation = null;
+        mBlackList =  FirebaseHelper.downloadUserBlacklist();
+        mSMSReplierRecords = FirebaseHelper.downloadUserSMSReplierRecords();
+        mFriendsList = FirebaseHelper.downloadUserFriendsList();
+        mHistories = new ArrayList<>();
+
+        mFriendsList.add("0889907925");
+    }
+
+    private Location getCurrentLocation() {
+        return null;
+    }
+
+    public void resetUser(){
+        pushDataToServer();
+        pushLocationToServer();
+        mHistories.clear();
+        mFriendsList.clear();
+        mBlackList.clear();
+        mSMSReplierRecords.clear();
+        mEmergencyMessage = Definition.DEFAULT_EMERGENCY_MESSAGE;
+        mPermissionSMS = true;
+        mPermissionGPS = true;
+        mPermissionCall = true;
+    }
+
+    public void setCurrentLocation(Location loc) {
+        pushLocationToServer();
+        this.mLastKnownLocation = loc;
+    }
+
 }

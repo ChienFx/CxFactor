@@ -16,7 +16,9 @@ public final class Definition {
     public static final String SIGNATURE = "\n[Automatic SMS form CxFator]";
 
 
-    public static String[] PERMISSIONS = {
+
+
+    public static String[] PERMISSIONS_SMS = {
             Manifest.permission.READ_SMS,
             Manifest.permission.SEND_SMS,
             Manifest.permission.RECEIVE_SMS

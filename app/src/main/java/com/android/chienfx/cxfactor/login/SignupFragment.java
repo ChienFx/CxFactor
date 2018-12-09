@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.chienfx.core.Definition;
-import com.android.chienfx.core.MyHelper;
+import com.android.chienfx.core.helper.MyHelper;
 import com.android.chienfx.cxfactor.R;
 
 @SuppressLint("ValidFragment")

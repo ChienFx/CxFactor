@@ -82,7 +82,8 @@
     <string name="title_activity_privacy_policy">PrivacyPolicyActivity</string>
     <string name="fossick">Fossicked?</string>
     <string name="rescure_alert_dialog_title">Rescue Alert !</string>
-    <string name="rescure_alert_dialog_message">The EMERGENCY MESSAGE is about to send to friends for rescuing. Abort message in [3-2-1] second.</string>
+    <string name="rescure_alert_dialog_message">The EMERGENCY MESSAGE is about to send to friends for rescuing.\nWould you like to keep this action ?</string>
     <string name="action_continue">Continue</string>
     <string name="action_abort">Abort</string>
+    <string name="action_no">No</string>
 </resources>

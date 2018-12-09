@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -30,9 +31,10 @@ import android.widget.Toast;
 
 import com.android.chienfx.core.Definition;
 import com.android.chienfx.core.IntentCode;
-import com.android.chienfx.core.MyHelper;
+import com.android.chienfx.core.helper.MyHelper;
 import com.android.chienfx.core.services.SMSReceiveService;
 import com.android.chienfx.core.user.User;
+import com.android.chienfx.cxfactor.BuildConfig;
 import com.android.chienfx.cxfactor.R;
 import com.android.chienfx.cxfactor.fragments.HomeFragment;
 import com.android.chienfx.cxfactor.fragments.MoviesFragment;
@@ -41,16 +43,24 @@ import com.android.chienfx.cxfactor.fragments.PhotosFragment;
 import com.android.chienfx.cxfactor.fragments.SettingsFragment;
 import com.android.chienfx.cxfactor.login.Login;
 import com.android.chienfx.cxfactor.others.CircleTransform;
+import com.android.chienfx.cxfactor.others.GpsService;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
+
+import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
     public FirebaseAuth mAuth;
     public FirebaseUser firebaseUser;
-    public User mUser = User.getInstance();
 
     private NavigationView navigationView;
     private DrawerLayout drawer;
@@ -413,10 +423,41 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void checkAllPermissions() {
-        if(!MyHelper.hasPermissions(this, Definition.PERMISSIONS)) {
+        if (!MyHelper.hasSMSPermissions(this, Definition.PERMISSIONS_SMS)) {
             showRequestPermissionsInfoAlertDialog();
         }
+        checkAndTurnOnGpsPermission();
     }
+    private void checkAndTurnOnGpsPermission() {
+        Dexter.withActivity(this)
+                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+                        //gpsService.startTracking();
+                        startGpsServices();
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+                        if (response.isPermanentlyDenied()) {
+                            Intent intent = new Intent();
+                            intent.setAction( Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null);
+                            intent.setData(uri);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).check();
+
+    }
+
     private void showRequestPermissionsInfoAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(com.android.chienfx.cxfactor.R.string.permission_alert_dialog_title);
@@ -439,7 +480,7 @@ public class MainActivity extends AppCompatActivity {
                         ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.SEND_SMS)
                 )
             return;
-        ActivityCompat.requestPermissions(this, Definition.PERMISSIONS, Definition.REQUEST_PERMISSION_CODE);
+        ActivityCompat.requestPermissions(this, Definition.PERMISSIONS_SMS, Definition.REQUEST_PERMISSION_CODE);
     }
 
     @Override
@@ -451,7 +492,7 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 {
                     MyHelper.toast(this, "Permissions Granted!");
-                    startServices();
+                    startSmsServices();
                 } else
                 {
                     MyHelper.toast(this, "Permissions Denied!");
@@ -461,10 +502,16 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void startServices() {
+    private void startSmsServices() {
         Intent receiverService = new Intent(MainActivity.this, SMSReceiveService.class);
         MainActivity.this.startService(receiverService);
         MyHelper.toast(getApplicationContext(), "Receiver SMS servive started");
+    }
+
+    private void startGpsServices() {
+        Intent gpsService = new Intent(MainActivity.this, GpsService.class);
+        MainActivity.this.startService(gpsService);
+        MyHelper.toast(getApplicationContext(), "GPS servive started");
     }
 
 
@@ -472,6 +519,7 @@ public class MainActivity extends AppCompatActivity {
         if(isLogined())
         {
             mAuth.signOut();
+            User.getInstance().resetUser();
             login();
         }
     }
@@ -488,7 +536,6 @@ public class MainActivity extends AppCompatActivity {
 
         checkAllPermissions();
         updateUI();
-        firebaseUser = mAuth.getCurrentUser();
     }
 
     private void login() {
@@ -505,7 +552,8 @@ public class MainActivity extends AppCompatActivity {
                         MyHelper.toast(this, data.getStringExtra("AccessToken"));
                     else {
                         MyHelper.toast(this, "login successful");
-                        updateUI();
+                        User.getInstance().initUser();
+                        //updateUI();
                     }
                 }
                 else{
@@ -516,6 +564,7 @@ public class MainActivity extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
 
     private void updateUI() {
         firebaseUser = mAuth.getCurrentUser();
@@ -543,6 +592,4 @@ public class MainActivity extends AppCompatActivity {
     private boolean isLogined() {
         return this.mAuth.getCurrentUser() != null;
     }
-
-
 }

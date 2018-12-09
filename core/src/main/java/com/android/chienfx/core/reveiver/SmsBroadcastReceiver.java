@@ -8,7 +8,6 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 
 
-import com.android.chienfx.core.MyHelper;
 import com.android.chienfx.core.user.User;
 
 /**

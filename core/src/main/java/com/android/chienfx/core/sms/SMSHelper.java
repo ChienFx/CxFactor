@@ -13,14 +13,16 @@ public class SMSHelper {
         return Patterns.PHONE.matcher(phoneNumber).matches();
     }
 
-    public static void sendDebugSMS(String number, String content){
+    public static boolean sendDebugSMS(String number, String content){
         try {
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(number, null, content, null, null);
+            return true;
         }
         catch(Exception e)
         {
             Log.d(TAG, "sendDebugSMS: "+e.getMessage());
+            return false;
         }
     }
 }

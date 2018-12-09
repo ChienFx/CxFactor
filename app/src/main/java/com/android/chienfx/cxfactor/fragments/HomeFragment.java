@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.android.chienfx.core.MyHelper;
+import com.android.chienfx.core.helper.MyHelper;
 import com.android.chienfx.core.user.User;
 import com.android.chienfx.cxfactor.R;
 
@@ -105,8 +105,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        User.getInstance().sendEmergencySMS();
-                        MyHelper.toast(getContext(), "Continue send sms");
+                        if(User.getInstance().isEmptyFriendsList()){
+                            MyHelper.toast(getContext(), "Your friends list is empty. Please fill Friends List first.");
+                            requestGotoSettingFriendsList();
+                        }
+                        else {
+                            int count = User.getInstance().sendEmergencySMS();
+                            MyHelper.toast(getContext(), "Sent Emergency SMS to " + count + " person(s).");
+                        }
                     }
                 });
                 builder.setNegativeButton(R.string.action_abort, new DialogInterface.OnClickListener() {
@@ -119,6 +125,25 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 builder.show();
                 break;
         }
+    }
+
+    private void requestGotoSettingFriendsList() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Alert")
+                .setMessage("Your friend list is empty now. Please fill friend list first.")
+                .setPositiveButton(getResources().getString(R.string.action_ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        //open setting friend list fragment
+                    }
+                })
+                .setNegativeButton(getResources().getString(R.string.action_no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .show();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -134,7 +159,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-            MyHelper.toast(getContext(), "Hello Friends :))");
+            //MyHelper.toast(getContext(), "Hello Friends :))");
         }
     }
 

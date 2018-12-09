@@ -21,5 +21,8 @@ Người dừng có thể tắt các permission bất kì lúc nào bằng cách
 
 - backlog
 + set default avatar for user registered by email
++
 + write policy
 + about me activity
++ change time interval for GPS to 10s
++ change distance change for GPS to 100m

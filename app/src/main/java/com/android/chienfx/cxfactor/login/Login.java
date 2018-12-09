@@ -12,7 +12,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.android.chienfx.core.IntentCode;
-import com.android.chienfx.core.MyHelper;
+import com.android.chienfx.core.helper.MyHelper;
 import com.android.chienfx.cxfactor.R;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;

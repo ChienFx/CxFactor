@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.chienfx.core.MyHelper;
+import com.android.chienfx.core.helper.MyHelper;
 import com.android.chienfx.cxfactor.R;
 
 /**

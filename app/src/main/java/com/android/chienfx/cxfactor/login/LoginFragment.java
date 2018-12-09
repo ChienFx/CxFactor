@@ -19,14 +19,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.chienfx.core.Definition;
-import com.android.chienfx.core.IntentCode;
-import com.android.chienfx.core.MyHelper;
+import com.android.chienfx.core.helper.MyHelper;
 import com.android.chienfx.cxfactor.R;
 import com.facebook.login.LoginManager;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 
 @SuppressLint("ValidFragment")
 public class LoginFragment extends Fragment implements View.OnClickListener {
