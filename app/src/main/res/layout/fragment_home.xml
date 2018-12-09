@@ -10,19 +10,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        android:layout_gravity="center"
         >
         <Button
             android:id="@+id/btn_History"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-            android:layout_above="@id/btn_Fossick"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="40dp"
-            android:layout_marginBottom="10dp"
-
-
-
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="50dp"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/circle_history"
             android:text="@string/history"
             android:textColor="@color/white"
@@ -36,9 +33,8 @@
             android:layout_height="wrap_content"
 
             android:layout_above="@id/btn_Rescue"
-
             android:layout_alignParentStart="true"
-            android:layout_marginBottom="40dp"
+            android:layout_marginBottom="20dp"
 
             android:background="@drawable/circle_autosendsms"
             android:text="@string/auto_send_sms"
@@ -50,7 +46,7 @@
             android:id="@+id/btn_Fossick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@id/btn_Rescue"
+            android:layout_below="@id/btn_History"
             android:layout_alignParentEnd="true"
             android:background="@drawable/circle_fossick"
             android:text="@string/fossick"
@@ -62,9 +58,8 @@
             android:id="@+id/btn_Rescue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="0dp"
+            android:layout_below="@id/btn_Fossick"
             android:background="@drawable/circle_rescue"
             android:text="Rescure"
             android:textColor="@color/white"

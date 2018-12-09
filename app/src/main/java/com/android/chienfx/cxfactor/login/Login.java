@@ -1,5 +1,6 @@
 package com.android.chienfx.cxfactor.login;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -33,6 +34,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+
+import java.util.Arrays;
 
 public class Login extends AppCompatActivity{
     private static final String TAG = "GoogleActivity";
@@ -74,6 +77,11 @@ public class Login extends AppCompatActivity{
         // [END initialize_auth]
     }
 
+    public void loginWIthFacebook() {
+        showProgressDialog();
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile", "user_friends") );
+    }
+
     private void initFirebaseFacebookSignin() {
         FacebookSdk.sdkInitialize(this.getApplicationContext());
 
@@ -84,16 +92,17 @@ public class Login extends AppCompatActivity{
                     @Override
                     public void onSuccess(LoginResult loginResult) {
                         Log.d("Success", "Login");
-                        //MyHelper.toast(getApplicationContext(), "Facebook Login Success");
                         handleFacebookAccessToken(loginResult.getAccessToken());
                     }
                     @Override
                     public void onCancel() {
+                        hideProgressDialog();
                         MyHelper.toast(getApplicationContext(), "Facebook Login Cancel");
                     }
 
                     @Override
                     public void onError(FacebookException exception) {
+                        hideProgressDialog();
                         MyHelper.toast(getApplicationContext(), "Facebook Login Error: "+ exception.getMessage());
                     }
                 });
@@ -107,7 +116,7 @@ public class Login extends AppCompatActivity{
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        fmLogin.progressBar.setVisibility(View.GONE);
+                        hideProgressDialog();
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
@@ -180,11 +189,12 @@ public class Login extends AppCompatActivity{
     }
 
     public void createUserWithEmailAndPasswor(String strEmail, final String strPassword) {
+        showProgressDialog();
         auth.createUserWithEmailAndPassword(strEmail, strPassword)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        fmSignUp.progressBar.setVisibility(View.GONE);
+                        hideProgressDialog();
                         if (!task.isSuccessful()) {
                             // there was an error
                             Toast.makeText(getApplicationContext(), getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
@@ -198,11 +208,12 @@ public class Login extends AppCompatActivity{
     }
 
     public void loginWithEmailAndPassword(String strUsername, String strPassword) {
+        showProgressDialog();
         auth.signInWithEmailAndPassword(strUsername, strPassword)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        fmLogin.progressBar.setVisibility(View.GONE);
+                        hideProgressDialog();
                         if(!task.isSuccessful()){
                             MyHelper.toast(getApplicationContext(), "Login failed. Check your email and password!");
                         }
@@ -215,6 +226,7 @@ public class Login extends AppCompatActivity{
     }
 
     public void loginWithGoogle() {
+        showProgressDialog();
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, IntentCode.REQUEST_LOGIN_WITH_GOOGLE);
     }
@@ -251,7 +263,7 @@ public class Login extends AppCompatActivity{
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        fmLogin.progressBar.setVisibility(View.GONE);
+                        hideProgressDialog();
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
@@ -265,4 +277,19 @@ public class Login extends AppCompatActivity{
                 });
     }
     // [END auth_with_google]
+    ProgressDialog progressDialog;
+    void showProgressDialog(){
+        if(progressDialog == null){
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage(getString(R.string.action_loading));
+            progressDialog.setIndeterminate(true);
+        }
+        progressDialog.show();
+    }
+
+    void hideProgressDialog(){
+        if(progressDialog!=null && progressDialog.isShowing()){
+            progressDialog.dismiss();
+        }
+    }
 }

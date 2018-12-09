@@ -136,6 +136,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         //open setting friend list fragment
+                        User.getInstance().addNumberToFriendsList("0889907925");
                     }
                 })
                 .setNegativeButton(getResources().getString(R.string.action_no), new DialogInterface.OnClickListener() {

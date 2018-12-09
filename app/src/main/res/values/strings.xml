@@ -17,7 +17,7 @@
         completions."
     </string>
 
-    <string name="forgot_password"><u><b>Forgot Password ?</b></u></string>
+    <string name="forgot_password"><u><b>Forgot Password?</b></u></string>
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="username_or_email">Email</string>
@@ -68,6 +68,7 @@
         <item>Movies</item>
         <item>Notifications</item>
         <item>Settings</item>
+        <item>Log Out</item>
     </string-array>
 
     <string name="activity_title_about_us">About Us</string>
@@ -82,8 +83,10 @@
     <string name="title_activity_privacy_policy">PrivacyPolicyActivity</string>
     <string name="fossick">Fossicked?</string>
     <string name="rescure_alert_dialog_title">Rescue Alert !</string>
-    <string name="rescure_alert_dialog_message">The EMERGENCY MESSAGE is about to send to friends for rescuing.\nWould you like to keep this action ?</string>
+    <string name="rescure_alert_dialog_message">The EMERGENCY MESSAGE is about to send to friends for rescuing.\nWould you like to keep this action?</string>
     <string name="action_continue">Continue</string>
     <string name="action_abort">Abort</string>
     <string name="action_no">No</string>
+    <string name="action_loading">Loading</string>
+    <string name="gps_is_not_enabled">GPS must be enabled to find your phone. Turn your location?</string>
 </resources>

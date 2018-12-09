@@ -34,8 +34,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     Button btnLogin;
     RelativeLayout relLoginWithFacebook, relLoginWithGoogle;
     EditText edUsername, edPassword;
-    protected ProgressBar progressBar;
-
     String strUsername, strPassword;
 
     Boolean checkUsername = false, checkPassword = false;
@@ -149,7 +147,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         edUsername = viewInstance.findViewById(R.id.edLoginUsername);
         relLoginWithGoogle = viewInstance.findViewById(R.id.relLoginWithGoogle);
         relLoginWithFacebook = viewInstance.findViewById(R.id.relLoginWithFacebook);
-        progressBar = viewInstance.findViewById(R.id.progressBarLogin);
     }
 
     private void changeLoginButtonState() {
@@ -164,18 +161,16 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
         switch (v.getId()){
             case R.id.btnLogin:
-                progressBar.setVisibility(View.VISIBLE);
                 strUsername = edUsername.getText().toString().trim();
                 strPassword = edPassword.getText().toString().trim();
                 loginInstance.loginWithEmailAndPassword(strUsername, strPassword);
                 break;
             case R.id.relLoginWithFacebook:
-                progressBar.setVisibility(View.VISIBLE);
                 checkLoginWithThirdOrg = true;
-                LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("email", "public_profile", "user_friends") );
+                loginInstance.loginWIthFacebook();
+
                 break;
             case R.id.relLoginWithGoogle:
-                progressBar.setVisibility(View.VISIBLE);
                 checkLoginWithThirdOrg = true;
                 loginInstance.loginWithGoogle();
                 break;
@@ -184,7 +179,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 startActivity(intentResetPassword);
                 break;
             case R.id.tvTermPolicy:
-                MyHelper.toast(getContext(), "This should open web browser to see term polycy!");
+                MyHelper.toast(getContext(), "This should open web browser to see term policy!");
                 break;
 
             case R.id.edLoginUsername: case R.id.edLoginPassword:

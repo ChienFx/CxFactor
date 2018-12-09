@@ -14,4 +14,5 @@ public class IntentCode {
     public static final int RESULT_LOGIN_SUCCESSFUL = 3005;
     public static final int RESULT_SIGNUP_SUCCESSFUL = 3006;
 
+    public static final int REQUEST_ENABLE_GPS = 9002;
 }

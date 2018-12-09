@@ -159,7 +159,7 @@ public class User {
         mFriendsList = FirebaseHelper.downloadUserFriendsList();
         mHistories = new ArrayList<>();
 
-        mFriendsList.add("0889907925");
+        this.addNumberToFriendsList("0971096050");
     }
 
     private Location getCurrentLocation() {

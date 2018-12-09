@@ -32,6 +32,7 @@ public class FirebaseHelper {
 
     public static boolean uploadUserLocationToListOfLocation(Location mLastKnownLocation) {
         return false;
+        //check user firebase
         //upload location len LIST location WITH TIEM FOR TRACKING LATER, khong phai replace location ?////
     }
 }

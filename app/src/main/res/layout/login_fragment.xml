@@ -14,6 +14,7 @@
         android:hint="@string/username_or_email"
         android:drawableStart="@drawable/icon_user"
         android:drawableEnd="@drawable/icon_alert"
+        android:layout_weight="1"
         />
     <EditText
         android:id="@+id/edLoginPassword"
@@ -24,6 +25,7 @@
         android:inputType="textPassword"
         android:drawableStart="@drawable/icon_password"
         android:drawableEnd="@drawable/icon_alert"
+        android:layout_weight="1"
         />
 
     <Button
@@ -32,6 +34,7 @@
         android:text="@string/login"
         android:background="@color/yellow"
         android:textStyle="bold"
+        android:layout_weight="1"
         />
 
     <TextView
@@ -39,18 +42,21 @@
         style="@style/text_default_style"
         android:text="@string/forgot_password"
         android:textColor="@color/text_link"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:layout_weight="1"
         />
 
     <RelativeLayout
         android:id="@+id/relLoginWithFacebook"
+        style="@style/text_default_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/blue"
-        android:layout_marginTop="20dp">
+        android:layout_weight="1"
+        >
 
         <TextView
+            android:id="@+id/tvFB"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -58,38 +64,39 @@
             android:text="@string/login_with_fb"
             android:textColor="@color/white"
             android:textStyle="bold" />
+
         <ImageView
             android:layout_width="@dimen/size_icon_inside_button"
             android:layout_height="@dimen/size_icon_inside_button"
-            android:src="@drawable/icon_facebook"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="30dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            />
+            android:src="@drawable/icon_facebook"  />
+
     </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/relLoginWithGoogle"
+        style="@style/text_default_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/red_dark"
-        android:layout_marginTop="10dp">
+        android:layout_weight="1"
+        android:background="@color/red_dark">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_centerVertical="true"
+            android:gravity="center"
             android:text="@string/login_with_google"
             android:textColor="@color/white"
             android:textStyle="bold" />
+
         <ImageView
             android:layout_width="@dimen/size_icon_inside_button"
             android:layout_height="@dimen/size_icon_inside_button"
-            android:src="@drawable/icon_google"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="30dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            />
+            android:src="@drawable/icon_google" />
     </RelativeLayout>
 
     <TextView
@@ -98,15 +105,7 @@
         android:text="@string/term_policy"
         android:textColor="@color/text_link"
         android:layout_gravity="bottom"
-        android:layout_marginTop="15dp"
-
-        android:gravity="center_horizontal"
+        android:gravity="center"
+        android:layout_weight="1"
         />
-    <ProgressBar
-        android:id="@+id/progressBarLogin"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center|bottom"
-        android:layout_margin="20dp"
-        android:visibility="gone" />
 </LinearLayout>

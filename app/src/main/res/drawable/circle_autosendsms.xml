@@ -5,8 +5,8 @@
     <solid
         android:color="#2d79e4"/>
     <size
-        android:width="180dp"
-        android:height="180dp"/>
+        android:width="190dp"
+        android:height="190dp"/>
     <stroke
         android:width="2dp"
         android:color="@color/blue"

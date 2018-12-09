@@ -26,3 +26,65 @@ Người dừng có thể tắt các permission bất kì lúc nào bằng cách
 + about me activity
 + change time interval for GPS to 10s
 + change distance change for GPS to 100m
+
+- open gps setting in setting activity
+//    boolean isGpsEnabled(){
+//        LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+//        try {
+//            boolean res =lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+//            MyHelper.toast(getApplicationContext(), "GPS is " + res);
+//            return res;
+//        }
+//        catch (Exception ex){
+//            Log.d("GPS Check", "FAILED");
+//        }
+//        return false;
+//    }
+//    private void checkAndTurnOnGpsPermission2() {
+//        if(!isGpsEnabled()){
+//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//            builder.setMessage(getResources().getString(R.string.gps_is_not_enabled));
+//            builder.setPositiveButton(getResources().getString(R.string.action_ok), new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    dialog.dismiss();
+//                    Intent gpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//                    startActivity(gpsIntent);
+//                    checkAndTurnOnGpsPermission2();
+//                }
+//            }).show();
+//        }
+//        else
+//        {
+//            startGpsServices();
+//        }
+//    }
+//
+    private void checkAndTurnOnGpsPermission() {
+        Dexter.withActivity(this)
+                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+                        startGpsServices();
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+                        if (response.isPermanentlyDenied()) {
+                            Intent intent = new Intent();
+                            intent.setAction( Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null);
+                            intent.setData(uri);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).check();
+
+    }

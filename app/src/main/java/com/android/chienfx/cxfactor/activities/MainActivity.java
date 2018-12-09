@@ -1,10 +1,13 @@
 package com.android.chienfx.cxfactor.activities;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +25,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,8 +58,6 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
-
-import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -418,48 +420,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        checkAllPermissions();
     }
 
 
     private void checkAllPermissions() {
-        if (!MyHelper.hasSMSPermissions(this, Definition.PERMISSIONS_SMS)) {
+        if (!MyHelper.hasSMSPermissions(this, Definition.PERMISSIONS)) {
             showRequestPermissionsInfoAlertDialog();
         }
-        checkAndTurnOnGpsPermission();
-    }
-    private void checkAndTurnOnGpsPermission() {
-        Dexter.withActivity(this)
-                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                .withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse response) {
-                        //gpsService.startTracking();
-                        startGpsServices();
-                    }
-
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse response) {
-                        if (response.isPermanentlyDenied()) {
-                            Intent intent = new Intent();
-                            intent.setAction( Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                            Uri uri = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null);
-                            intent.setData(uri);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                        }
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
-                        token.continuePermissionRequest();
-                    }
-                }).check();
-
     }
 
     private void showRequestPermissionsInfoAlertDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(com.android.chienfx.cxfactor.R.string.permission_alert_dialog_title);
         builder.setMessage(com.android.chienfx.cxfactor.R.string.permission_dialog_message);
 
@@ -475,12 +446,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void requestMyPermissions() {
         if (
-                ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.RECEIVE_SMS) &&
-                        ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.READ_SMS) &&
-                        ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.SEND_SMS)
+                ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.RECEIVE_SMS)
+                        && ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION
+                        )
                 )
             return;
-        ActivityCompat.requestPermissions(this, Definition.PERMISSIONS_SMS, Definition.REQUEST_PERMISSION_CODE);
+        ActivityCompat.requestPermissions(this, Definition.PERMISSIONS, Definition.REQUEST_PERMISSION_CODE);
     }
 
     @Override
@@ -493,6 +464,7 @@ public class MainActivity extends AppCompatActivity {
                 {
                     MyHelper.toast(this, "Permissions Granted!");
                     startSmsServices();
+                    startGpsServices();
                 } else
                 {
                     MyHelper.toast(this, "Permissions Denied!");
@@ -511,15 +483,17 @@ public class MainActivity extends AppCompatActivity {
     private void startGpsServices() {
         Intent gpsService = new Intent(MainActivity.this, GpsService.class);
         MainActivity.this.startService(gpsService);
-        MyHelper.toast(getApplicationContext(), "GPS servive started");
+        //MyHelper.toast(getApplicationContext(), "GPS servive started");
     }
 
 
     private void logOut() {
         if(isLogined())
         {
+            showProgressDialog();
             mAuth.signOut();
             User.getInstance().resetUser();
+            hideProgressDialog();
             login();
         }
     }
@@ -531,11 +505,13 @@ public class MainActivity extends AppCompatActivity {
         if(!isLogined()){
             login();
         }
-        else
+        else {
             MyHelper.toast(this, "Logined!");
+            checkAllPermissions();
+            updateUI();
+        }
 
-        checkAllPermissions();
-        updateUI();
+
     }
 
     private void login() {
@@ -553,20 +529,24 @@ public class MainActivity extends AppCompatActivity {
                     else {
                         MyHelper.toast(this, "login successful");
                         User.getInstance().initUser();
-                        //updateUI();
+                        checkAllPermissions();
+                        updateUI();
                     }
                 }
                 else{
                     MyHelper.toast(this, "Login Failed");
                 }
                 break;
-
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
 
     private void updateUI() {
+        navItemIndex = 0;//home fragment
+        setToolbarTitle();
+        selectNavMenu();
+
         firebaseUser = mAuth.getCurrentUser();
         if(firebaseUser!=null){
             String strName = firebaseUser.getDisplayName();
@@ -577,7 +557,6 @@ public class MainActivity extends AppCompatActivity {
                 "://"+getResources().getResourcePackageName(R.drawable.ic_launcher_foreground) +
                         '/'+getResources().getResourceTypeName(R.drawable.ic_launcher_foreground));
             loadNavHeader(strName, strEmail, uriPhoto);
-
             setUpNavigationView();
 
 
@@ -591,5 +570,20 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isLogined() {
         return this.mAuth.getCurrentUser() != null;
+    }
+    ProgressDialog progressDialog;
+    void showProgressDialog(){
+        if(progressDialog == null){
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage(getString(R.string.action_loading));
+            progressDialog.setIndeterminate(true);
+        }
+        progressDialog.show();
+    }
+
+    void hideProgressDialog(){
+        if(progressDialog!=null && progressDialog.isShowing()){
+            progressDialog.dismiss();
+        }
     }
 }

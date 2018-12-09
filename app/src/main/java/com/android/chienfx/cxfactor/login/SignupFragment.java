@@ -30,8 +30,6 @@ public class SignupFragment extends Fragment implements View.OnClickListener {
     protected CheckBox ckbAgreeTerm;
     protected String strPassword, strEmail, strConfirmPassword;
 
-    protected ProgressBar progressBar;
-
     boolean checkEmail = false, checkPassword = false, checkConfimPassword = false, checkPolicy = false;
     @SuppressLint("ValidFragment")
     public SignupFragment(Login login) {
@@ -170,7 +168,6 @@ public class SignupFragment extends Fragment implements View.OnClickListener {
         tvTerm = mViewInstance.findViewById(R.id.tvTermPolicy);
         ckbAgreeTerm = mViewInstance.findViewById(R.id.ckbAgreeTerm);
         btnRegister = mViewInstance.findViewById(R.id.btnRegister);
-        progressBar = mViewInstance.findViewById(R.id.progressBarSignUp);
     }
 
     @Override
@@ -185,11 +182,7 @@ public class SignupFragment extends Fragment implements View.OnClickListener {
                 strEmail = edEmail.getText().toString().trim();
                 strPassword = edPassword.getText().toString().trim();
                 strConfirmPassword = edPasswordConfirm.getText().toString().trim();
-
-                progressBar.setVisibility(View.VISIBLE);
                 loginInstance.createUserWithEmailAndPasswor(strEmail, strPassword);
-
-                ///clearSignFields();
                 break;
         }
     }
