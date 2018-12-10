@@ -5,10 +5,98 @@
     android:layout_height="match_parent"
     tools:context=".fragments.SettingsFragment">
 
+    <TableLayout
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:gravity="center"
+        >
+        <TableRow
+            android:layout_margin="10dp">
+            <TextView
+                style="@style/table_item_style"
+                android:text="@string/find_my_phone"
+                />
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/swFindMyPhone"
+                style="@style/table_item_style"
+                android:layout_marginLeft="20dp"
+                />
+        </TableRow>
+
+        <TableRow android:layout_margin="10dp">
+            <TextView
+                style="@style/table_item_style"
+                android:text="@string/auto_reply_sms" />
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/swAutoReplySMS"
+                style="@style/table_item_style"
+                android:layout_marginLeft="20dp"
+                />
+        </TableRow>
+
+        <TableRow android:layout_margin="10dp">
+            <TextView
+                style="@style/table_item_style"
+                android:text="@string/decline_calls"/>
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/swDeclineCall"
+                style="@style/table_item_style"
+                android:layout_marginLeft="20dp"
+                />
+        </TableRow>
+
+        <TableRow android:layout_margin="10dp">
+            <TextView
+                style="@style/table_item_style"
+                android:text="@string/emergency_contacts"
+                />
+            <ImageButton
+                android:id="@+id/imbtnEmergencyContact"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_settings_black_24dp"
+                android:background="@color/transparent"
+                android:layout_marginLeft="20dp"
+                />
+        </TableRow>
+        <TableRow android:layout_margin="10dp">
+            <TextView
+                style="@style/table_item_style"
+                android:text="@string/sms_replier_records"/>
+            <ImageButton
+                android:id="@+id/imbtnSMSReplier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_settings_black_24dp"
+                android:background="@color/transparent"
+                android:layout_marginLeft="20dp"
+                />
+        </TableRow>
+
+        <TableRow android:layout_margin="10dp">
+            <TextView
+                style="@style/table_item_style"
+                android:text="@string/blacklist"
+                />
+
+            <ImageButton
+                android:id="@+id/imbtnBlacklist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_settings_black_24dp"
+                android:layout_marginLeft="20dp"
+                />
+        </TableRow>
+
+    </TableLayout>
+
+
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Setting nef" />
 
 </FrameLayout>

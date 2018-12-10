@@ -3,12 +3,19 @@ package com.android.chienfx.cxfactor.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.ImageButton;
+import android.widget.Switch;
 
 import com.android.chienfx.core.helper.MyHelper;
+import com.android.chienfx.core.user.User;
 import com.android.chienfx.cxfactor.R;
 
 /**
@@ -28,7 +35,7 @@ public class SettingsFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    private View mViewInstance;
     private OnFragmentInteractionListener mListener;
 
     public SettingsFragment() {
@@ -66,7 +73,59 @@ public class SettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+        mViewInstance = inflater.inflate(R.layout.fragment_settings, container, false);
+        return mViewInstance;
+    }
+
+    SwitchCompat swFindMyPhone, swAutoReplySMS, swDeclineCall;
+    ImageButton imbtnEmergencyContact, imbtnSmsReplier, imbtnBlaclist;
+    User user = User.getInstance();
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
+        registerViews();
+
+        loadCurrentState();
+
+        handleViewEvents();
+
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+    private void handleViewEvents() {
+        swFindMyPhone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                user.setFindPhone(isChecked);
+            }
+        });
+        swAutoReplySMS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                user.setAutoReplySms(isChecked);
+            }
+        });
+        swDeclineCall.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                user.setDeclineCall(isChecked);
+            }
+        });
+    }
+
+    private void loadCurrentState() {
+        swFindMyPhone.setChecked(user.getFindPhone());
+        swAutoReplySMS.setChecked(user.getAutoReplySms());
+        swDeclineCall.setChecked(user.getDeclineCall());
+    }
+
+    private void registerViews() {
+        swFindMyPhone = mViewInstance.findViewById(R.id.swFindMyPhone);
+        swAutoReplySMS = mViewInstance.findViewById(R.id.swAutoReplySMS);
+        swDeclineCall = mViewInstance.findViewById(R.id.swDeclineCall);
+        imbtnEmergencyContact = mViewInstance.findViewById(R.id.imbtnEmergencyContact);
+        imbtnSmsReplier = mViewInstance.findViewById(R.id.imbtnSMSReplier);
+        imbtnBlaclist = mViewInstance.findViewById(R.id.imbtnBlacklist);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -82,7 +141,6 @@ public class SettingsFragment extends Fragment {
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-            MyHelper.toast(getContext(), "Hello freind :))");
         }
     }
 

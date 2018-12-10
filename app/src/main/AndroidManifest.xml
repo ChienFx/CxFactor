@@ -11,9 +11,8 @@
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
@@ -50,8 +49,8 @@
         <service
             android:name=".others.GpsService"
             android:enabled="true"
-            android:exported="true"
-            ></service>
+            android:exported="true" />
+
         <receiver
             android:name="com.android.chienfx.core.reveiver.BootBroadcast"
             android:enabled="true"
@@ -85,7 +84,10 @@
         <activity
             android:name=".activities.PrivacyPolicyActivity"
             android:label="@string/title_activity_privacy_policy"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
     </application>
 
 </manifest>

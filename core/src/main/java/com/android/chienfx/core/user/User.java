@@ -34,7 +34,7 @@ public class User {
     boolean mPermissionCall;
 
     private User() {
-        initUser();
+        loadUserData();
     }
 
     public boolean isEmptyFriendsList() {
@@ -146,7 +146,13 @@ public class User {
         return str;
     }
 
-    public void initUser(){
+    public void loadUserData(){
+//        if(currentUID match with last saved user)
+//            loadLastSavedUser();
+//        else{
+//            loadUserDataFromFirebase();
+//        }
+
         mLastKnownLocation = getCurrentLocation();
         mPermissionSMS = true;
         mPermissionGPS = true;
@@ -184,4 +190,32 @@ public class User {
         this.mLastKnownLocation = loc;
     }
 
+    public boolean getFindPhone() {
+        return this.mPermissionGPS;
+    }
+
+    public void setFindPhone(boolean value){
+        mPermissionGPS = value;
+    }
+
+    public boolean getAutoReplySms() {
+        return this.mPermissionSMS;
+    }
+
+    public void setAutoReplySms(boolean value){
+        mPermissionSMS = value;
+    }
+
+    public boolean getDeclineCall() {
+        return this.mPermissionCall;
+    }
+
+    public void setDeclineCall(boolean value){
+        mPermissionCall = value;
+    }
+
+
+    public void saveUserData() {
+        //store class with current uid
+    }
 }

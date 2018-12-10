@@ -3,15 +3,12 @@ package com.android.chienfx.cxfactor.activities;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -25,7 +22,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,7 +34,6 @@ import com.android.chienfx.core.IntentCode;
 import com.android.chienfx.core.helper.MyHelper;
 import com.android.chienfx.core.services.SMSReceiveService;
 import com.android.chienfx.core.user.User;
-import com.android.chienfx.cxfactor.BuildConfig;
 import com.android.chienfx.cxfactor.R;
 import com.android.chienfx.cxfactor.fragments.HomeFragment;
 import com.android.chienfx.cxfactor.fragments.MoviesFragment;
@@ -52,12 +47,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.single.PermissionListener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -90,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
     private boolean shouldLoadHomeFragOnBackPress = true;
     private Handler mHandler;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +95,43 @@ public class MainActivity extends AppCompatActivity {
             CURRENT_TAG = TAG_HOME;
             loadHomeFragment();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if(!isLogined()){
+            login();
+        }
+        else {
+            MyHelper.toast(this, "Logined!");
+            loadUserData();
+            checkAllPermissions();
+            updateUI();
+        }
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        //load user data
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        saveUserData();
+        super.onPause();
+    }
+
+    private void loadUserData() {
+        User.getInstance().loadUserData();
+    }
+
+    private void saveUserData(){
+        User.getInstance().saveUserData();
     }
 
     private void registerViews() {
@@ -136,6 +161,149 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+    }
+
+    private void login() {
+        Intent intentLogin = new Intent(this, Login.class);
+        startActivityForResult(intentLogin, IntentCode.REQUEST_LOGIN);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        switch (requestCode){
+            case IntentCode.REQUEST_LOGIN:
+                if(resultCode == IntentCode.RESULT_LOGIN_SUCCESSFUL) {
+                    if(data!=null)
+                        MyHelper.toast(this, data.getStringExtra("AccessToken"));
+                    else {
+                        MyHelper.toast(this, "login successful");
+                        loadUserData();
+                        checkAllPermissions();
+                        updateUI();
+                    }
+                }
+                else{
+                    MyHelper.toast(this, "Login Failed");
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+    private void updateUI() {
+        firebaseUser = mAuth.getCurrentUser();
+        if(firebaseUser!=null){
+            String strName = firebaseUser.getDisplayName();
+            String strEmail = firebaseUser.getEmail();
+            Uri uriPhoto = firebaseUser.getPhotoUrl();
+            if(uriPhoto==null)
+                uriPhoto = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE +
+                        "://"+getResources().getResourcePackageName(R.drawable.ic_launcher_foreground) +
+                        '/'+getResources().getResourceTypeName(R.drawable.ic_launcher_foreground));
+            loadNavHeader(strName, strEmail, uriPhoto);
+            setUpNavigationView();
+
+
+        }
+        else{
+            MyHelper.toast(getApplicationContext(), "User invalid!");
+        }
+
+
+    }
+
+    private boolean isLogined() {
+        return this.mAuth.getCurrentUser() != null;
+    }
+    ProgressDialog progressDialog;
+    void showProgressDialog(){
+        if(progressDialog == null){
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage(getString(R.string.action_loading));
+            progressDialog.setIndeterminate(true);
+        }
+        progressDialog.show();
+    }
+
+    void hideProgressDialog(){
+        if(progressDialog!=null && progressDialog.isShowing()){
+            progressDialog.dismiss();
+        }
+    }
+    private void checkAllPermissions() {
+        if (!MyHelper.hasSMSPermissions(this, Definition.PERMISSIONS)) {
+            showRequestPermissionsInfoAlertDialog();
+        }
+    }
+
+    private void showRequestPermissionsInfoAlertDialog() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(com.android.chienfx.cxfactor.R.string.permission_alert_dialog_title);
+        builder.setMessage(com.android.chienfx.cxfactor.R.string.permission_dialog_message);
+
+        builder.setPositiveButton(R.string.action_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                requestMyPermissions();
+            }
+        });
+        builder.show();
+    }
+
+    private void requestMyPermissions() {
+        if (
+                ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.RECEIVE_SMS)
+                        && ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION
+                        )
+                )
+            return;
+        ActivityCompat.requestPermissions(this, Definition.PERMISSIONS, Definition.REQUEST_PERMISSION_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode)
+        {
+            case Definition.REQUEST_PERMISSION_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
+                    MyHelper.toast(this, "Permissions Granted!");
+                    startSmsServices();
+                    startGpsServices();
+                } else
+                {
+                    MyHelper.toast(this, "Permissions Denied!");
+                }
+            }
+        }
+
+    }
+
+    private void startSmsServices() {
+        Intent receiverService = new Intent(MainActivity.this, SMSReceiveService.class);
+        MainActivity.this.startService(receiverService);
+        MyHelper.toast(getApplicationContext(), "Receiver SMS servive started");
+    }
+
+    private void startGpsServices() {
+        Intent gpsService = new Intent(MainActivity.this, GpsService.class);
+        MainActivity.this.startService(gpsService);
+        //MyHelper.toast(getApplicationContext(), "GPS servive started");
+    }
+
+
+    private void logOut() {
+        if(isLogined())
+        {
+            showProgressDialog();
+            mAuth.signOut();
+            User.getInstance().resetUser();
+            hideProgressDialog();
+            login();
+        }
     }
 
     /***
@@ -287,7 +455,7 @@ public class MainActivity extends AppCompatActivity {
                         CURRENT_TAG = TAG_SETTINGS;
                         break;
                     case R.id.nav_logout:
-                        navItemIndex = 5;
+                        //navItemIndex = 5;
                         logOut();
                         break;
                     case R.id.nav_about_us:
@@ -414,176 +582,5 @@ public class MainActivity extends AppCompatActivity {
             fab.show();
         else
             fab.hide();
-    }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-
-    private void checkAllPermissions() {
-        if (!MyHelper.hasSMSPermissions(this, Definition.PERMISSIONS)) {
-            showRequestPermissionsInfoAlertDialog();
-        }
-    }
-
-    private void showRequestPermissionsInfoAlertDialog() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(com.android.chienfx.cxfactor.R.string.permission_alert_dialog_title);
-        builder.setMessage(com.android.chienfx.cxfactor.R.string.permission_dialog_message);
-
-        builder.setPositiveButton(R.string.action_ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                requestMyPermissions();
-            }
-        });
-        builder.show();
-    }
-
-    private void requestMyPermissions() {
-        if (
-                ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.RECEIVE_SMS)
-                        && ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION
-                        )
-                )
-            return;
-        ActivityCompat.requestPermissions(this, Definition.PERMISSIONS, Definition.REQUEST_PERMISSION_CODE);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode)
-        {
-            case Definition.REQUEST_PERMISSION_CODE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                {
-                    MyHelper.toast(this, "Permissions Granted!");
-                    startSmsServices();
-                    startGpsServices();
-                } else
-                {
-                    MyHelper.toast(this, "Permissions Denied!");
-                }
-            }
-        }
-
-    }
-
-    private void startSmsServices() {
-        Intent receiverService = new Intent(MainActivity.this, SMSReceiveService.class);
-        MainActivity.this.startService(receiverService);
-        MyHelper.toast(getApplicationContext(), "Receiver SMS servive started");
-    }
-
-    private void startGpsServices() {
-        Intent gpsService = new Intent(MainActivity.this, GpsService.class);
-        MainActivity.this.startService(gpsService);
-        //MyHelper.toast(getApplicationContext(), "GPS servive started");
-    }
-
-
-    private void logOut() {
-        if(isLogined())
-        {
-            showProgressDialog();
-            mAuth.signOut();
-            User.getInstance().resetUser();
-            hideProgressDialog();
-            login();
-        }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        if(!isLogined()){
-            login();
-        }
-        else {
-            MyHelper.toast(this, "Logined!");
-            checkAllPermissions();
-            updateUI();
-        }
-
-
-    }
-
-    private void login() {
-        Intent intentLogin = new Intent(this, Login.class);
-        startActivityForResult(intentLogin, IntentCode.REQUEST_LOGIN);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        switch (requestCode){
-            case IntentCode.REQUEST_LOGIN:
-                if(resultCode == IntentCode.RESULT_LOGIN_SUCCESSFUL) {
-                    if(data!=null)
-                        MyHelper.toast(this, data.getStringExtra("AccessToken"));
-                    else {
-                        MyHelper.toast(this, "login successful");
-                        User.getInstance().initUser();
-                        checkAllPermissions();
-                        updateUI();
-                    }
-                }
-                else{
-                    MyHelper.toast(this, "Login Failed");
-                }
-                break;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-
-    private void updateUI() {
-        navItemIndex = 0;//home fragment
-        setToolbarTitle();
-        selectNavMenu();
-
-        firebaseUser = mAuth.getCurrentUser();
-        if(firebaseUser!=null){
-            String strName = firebaseUser.getDisplayName();
-            String strEmail = firebaseUser.getEmail();
-            Uri uriPhoto = firebaseUser.getPhotoUrl();
-            if(uriPhoto==null)
-                uriPhoto = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE +
-                "://"+getResources().getResourcePackageName(R.drawable.ic_launcher_foreground) +
-                        '/'+getResources().getResourceTypeName(R.drawable.ic_launcher_foreground));
-            loadNavHeader(strName, strEmail, uriPhoto);
-            setUpNavigationView();
-
-
-        }
-        else{
-            MyHelper.toast(getApplicationContext(), "User invalid!");
-        }
-
-
-    }
-
-    private boolean isLogined() {
-        return this.mAuth.getCurrentUser() != null;
-    }
-    ProgressDialog progressDialog;
-    void showProgressDialog(){
-        if(progressDialog == null){
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setMessage(getString(R.string.action_loading));
-            progressDialog.setIndeterminate(true);
-        }
-        progressDialog.show();
-    }
-
-    void hideProgressDialog(){
-        if(progressDialog!=null && progressDialog.isShowing()){
-            progressDialog.dismiss();
-        }
     }
 }
