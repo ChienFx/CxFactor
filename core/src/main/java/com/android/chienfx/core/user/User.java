@@ -4,6 +4,8 @@ import android.location.Location;
 import android.text.format.Time;
 
 import com.android.chienfx.core.Definition;
+import com.android.chienfx.core.contact.Contact;
+import com.android.chienfx.core.contact.ContactEmergency;
 import com.android.chienfx.core.helper.FirebaseHelper;
 import com.android.chienfx.core.history.History;
 import com.android.chienfx.core.history.HistoryEmergency;
@@ -22,11 +24,10 @@ public class User {
     }
 
     ArrayList<SMSReplierRecord> mSMSReplierRecords;
-    ArrayList<String> mBlackList; // detect sms and cancel (not reply)
-    ArrayList<String> mFriendsList;
+    ArrayList<Contact> mBlackList; // detect sms and cancel (not reply)
+    ArrayList<ContactEmergency> mEmergencyContacts;
     ArrayList<History> mHistories;
 
-    String mEmergencyMessage;
     Location mLastKnownLocation; //tracking gps
 
     boolean mPermissionSMS;
@@ -38,7 +39,7 @@ public class User {
     }
 
     public boolean isEmptyFriendsList() {
-        return mFriendsList.isEmpty();
+        return mEmergencyContacts.isEmpty();
     }
 
     private String createLocationLink() {
@@ -53,14 +54,14 @@ public class User {
         mSMSReplierRecords.add(new SMSReplierRecord(start, end, content));
     }
 
-    public void addNumberToBlacklist(String number){
-        mFriendsList.remove(number);
-        mBlackList.add(number);
+    public void addNumberToBlacklist(Contact contact){
+        mEmergencyContacts.remove(contact);
+        mBlackList.add(contact);
     }
 
-    public void addNumberToFriendsList(String number){
-        mBlackList.remove(number);
-        mFriendsList.add(number);
+    public void addNumberToEmergencyContactList(ContactEmergency contactEmergency){
+        mBlackList.remove(contactEmergency);
+        mEmergencyContacts.add(contactEmergency);
     }
 
     public void replyInComeSMS(String smsSender, String smsBody){
@@ -98,8 +99,6 @@ public class User {
 
     }
 
-
-
     public boolean pushLocationToServer() {
         return FirebaseHelper.uploadUserLocationToListOfLocation(this.mLastKnownLocation);
     }
@@ -122,29 +121,27 @@ public class User {
     }
 
     private boolean isInBlacklist(String smsSender) {
-        for(String s: mBlackList)
-            if(s.compareTo(smsSender)==0)
+        for(Contact s: mBlackList)
+            if(s.getContactNumber().compareTo(smsSender)==0)
                 return true;
         return false;
     }
 
     public int sendEmergencySMS() {
-        String strSMS = getEmergencySMS();
         int count = 0;
-        for(String friend: mFriendsList){
-            boolean result = SMSHelper.sendDebugSMS(friend, strSMS);
+        for(ContactEmergency contact: mEmergencyContacts){
+            String number = contact.getContactNumber();
+            String message = contact.getContactMessage();
+            if(contact.getLocationFlag() && mPermissionGPS)
+                message+="\nMy location is " + createLocationLink();
+
+            boolean result = SMSHelper.sendDebugSMS(number, message);
             if(result) count++;
-            writeHistory(new HistoryEmergency(friend, strSMS, this.mPermissionGPS, result));
+            writeHistory(new HistoryEmergency(number, message, this.mPermissionGPS, result));
         }
         return count;
     }
 
-    private String getEmergencySMS() {
-        String str = this.mEmergencyMessage;
-        if(mPermissionGPS)
-            str+="\nMy location is: " + createLocationLink();
-        return str;
-    }
 
     public void loadUserData(){
 //        if(currentUID match with last saved user)
@@ -157,15 +154,14 @@ public class User {
         mPermissionSMS = true;
         mPermissionGPS = true;
         mPermissionCall = true;
-        mEmergencyMessage = Definition.DEFAULT_EMERGENCY_MESSAGE;
 
         mLastKnownLocation = null;
         mBlackList =  FirebaseHelper.downloadUserBlacklist();
         mSMSReplierRecords = FirebaseHelper.downloadUserSMSReplierRecords();
-        mFriendsList = FirebaseHelper.downloadUserFriendsList();
+        mEmergencyContacts = FirebaseHelper.downloadUserEmergencyContactList();
         mHistories = new ArrayList<>();
 
-        this.addNumberToFriendsList("0971096050");
+        this.addNumberToEmergencyContactList(new ContactEmergency("chienfx","0971096050"));
     }
 
     private Location getCurrentLocation() {
@@ -176,10 +172,10 @@ public class User {
         pushDataToServer();
         pushLocationToServer();
         mHistories.clear();
-        mFriendsList.clear();
+        mEmergencyContacts.clear();
         mBlackList.clear();
         mSMSReplierRecords.clear();
-        mEmergencyMessage = Definition.DEFAULT_EMERGENCY_MESSAGE;
+
         mPermissionSMS = true;
         mPermissionGPS = true;
         mPermissionCall = true;

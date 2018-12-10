@@ -255,8 +255,7 @@ public class MainActivity extends AppCompatActivity {
     private void requestMyPermissions() {
         if (
                 ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.RECEIVE_SMS)
-                        && ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION
-                        )
+                        && ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
                 )
             return;
         ActivityCompat.requestPermissions(this, Definition.PERMISSIONS, Definition.REQUEST_PERMISSION_CODE);
