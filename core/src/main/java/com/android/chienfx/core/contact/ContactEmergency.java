@@ -5,8 +5,8 @@ import com.android.chienfx.core.Definition;
 import java.io.BufferedOutputStream;
 
 public class ContactEmergency extends Contact {
-    Boolean mLocationSend;
-    String mMessage;
+    public Boolean mLocationSend;
+    public String mMessage;
     public ContactEmergency(String name, String number, String message, Boolean locationFlag) {
         super(name, number);
         mLocationSend = locationFlag;

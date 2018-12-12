@@ -31,10 +31,12 @@ import android.widget.Toast;
 
 import com.android.chienfx.core.Definition;
 import com.android.chienfx.core.IntentCode;
+import com.android.chienfx.core.contact.ContactEmergency;
 import com.android.chienfx.core.helper.MyHelper;
 import com.android.chienfx.core.services.SMSReceiveService;
 import com.android.chienfx.core.user.User;
 import com.android.chienfx.cxfactor.R;
+import com.android.chienfx.cxfactor.fragments.EmergencyContactFragment;
 import com.android.chienfx.cxfactor.fragments.HomeFragment;
 import com.android.chienfx.cxfactor.fragments.MoviesFragment;
 import com.android.chienfx.cxfactor.fragments.NotificationsFragment;
@@ -48,7 +50,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements EmergencyContactFragment.OnListFragmentInteractionListener {
+    private static final MainActivity ourInstance = new MainActivity();
+    public static MainActivity getInstance() {
+        return ourInstance;
+    }
 
     public FirebaseAuth mAuth;
     public FirebaseUser firebaseUser;
@@ -65,12 +71,8 @@ public class MainActivity extends AppCompatActivity {
     public static int navItemIndex = 0;
 
     // tags used to attach the fragments
-    private static final String TAG_HOME = "home";
-    private static final String TAG_PHOTOS = "photos";
-    private static final String TAG_MOVIES = "movies";
-    private static final String TAG_NOTIFICATIONS = "notifications";
-    private static final String TAG_SETTINGS = "settings";
-    public static String CURRENT_TAG = TAG_HOME;
+
+    public static String CURRENT_TAG = Definition.TAG_HOME;
 
     // toolbar titles respected to selected nav menu item
     private String[] activityTitles;
@@ -92,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             navItemIndex = 0;
-            CURRENT_TAG = TAG_HOME;
+            CURRENT_TAG = Definition.TAG_HOME;
             loadHomeFragment();
         }
     }
@@ -179,11 +181,17 @@ public class MainActivity extends AppCompatActivity {
                         MyHelper.toast(this, "login successful");
                         loadUserData();
                         checkAllPermissions();
-                        updateUI();
+//                        updateUI();
                     }
                 }
                 else{
                     MyHelper.toast(this, "Login Failed");
+                }
+                break;
+            case IntentCode.REQUEST_EMERGENCY_RECORD:
+                if(resultCode==IntentCode.RESULT_EMERGENC_CONTACT_RECORD){
+                    MyHelper.toast(this, data.getStringExtra("action"));
+                    //EmergencyContactFragment.refreshList();
                 }
                 break;
         }
@@ -209,13 +217,12 @@ public class MainActivity extends AppCompatActivity {
         else{
             MyHelper.toast(getApplicationContext(), "User invalid!");
         }
-
-
     }
 
     private boolean isLogined() {
         return this.mAuth.getCurrentUser() != null;
     }
+
     ProgressDialog progressDialog;
     void showProgressDialog(){
         if(progressDialog == null){
@@ -231,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
             progressDialog.dismiss();
         }
     }
+
     private void checkAllPermissions() {
         if (!MyHelper.hasSMSPermissions(this, Definition.PERMISSIONS)) {
             showRequestPermissionsInfoAlertDialog();
@@ -388,27 +396,34 @@ public class MainActivity extends AppCompatActivity {
 
     private Fragment getHomeFragment() {
         switch (navItemIndex) {
-            case 0:
+            case Definition.FRAGMENT_INDEX_HOME:
                 // home
                 HomeFragment homeFragment = new HomeFragment();
                 return homeFragment;
-            case 1:
+            case Definition.FRAGMENT_INDEX_PHOTO:
                 // photos
                 PhotosFragment photosFragment = new PhotosFragment();
                 return photosFragment;
-            case 2:
+            case Definition.FRAGMENT_INDEX_MOVIE:
                 // movies fragment
                 MoviesFragment moviesFragment = new MoviesFragment();
                 return moviesFragment;
-            case 3:
+            case Definition.FRAGMENT_INDEX_NOTIFICATION:
                 // notifications fragment
                 NotificationsFragment notificationsFragment = new NotificationsFragment();
                 return notificationsFragment;
 
-            case 4:
+            case Definition.FRAGMENT_INDEX_SETTING:
                 // settings fragment
                 SettingsFragment settingsFragment = new SettingsFragment();
                 return settingsFragment;
+
+            case Definition.FRAGMENT_INDEX_EMERGENCY_CONTACT:
+                // settings fragment
+                EmergencyContactFragment emergencyContactFragment = new EmergencyContactFragment();
+                return emergencyContactFragment;
+
+
             default:
                 return new HomeFragment();
         }
@@ -434,27 +449,21 @@ public class MainActivity extends AppCompatActivity {
                 switch (menuItem.getItemId()) {
                     //Replacing the main content with ContentFragment Which is our Inbox View;
                     case R.id.nav_home:
-                        navItemIndex = 0;
-                        CURRENT_TAG = TAG_HOME;
+                        createFragment(Definition.FRAGMENT_INDEX_HOME, Definition.TAG_HOME);
                         break;
                     case R.id.nav_photos:
-                        navItemIndex = 1;
-                        CURRENT_TAG = TAG_PHOTOS;
+                        createFragment(Definition.FRAGMENT_INDEX_PHOTO, Definition.TAG_PHOTOS);
                         break;
                     case R.id.nav_movies:
-                        navItemIndex = 2;
-                        CURRENT_TAG = TAG_MOVIES;
+                        createFragment(Definition.FRAGMENT_INDEX_MOVIE, Definition.TAG_MOVIES);
                         break;
                     case R.id.nav_notifications:
-                        navItemIndex = 3;
-                        CURRENT_TAG = TAG_NOTIFICATIONS;
+                        createFragment(Definition.FRAGMENT_INDEX_NOTIFICATION, Definition.TAG_NOTIFICATIONS);
                         break;
                     case R.id.nav_settings:
-                        navItemIndex = 4;
-                        CURRENT_TAG = TAG_SETTINGS;
+                        createFragment(Definition.FRAGMENT_INDEX_SETTING, Definition.TAG_SETTINGS);
                         break;
                     case R.id.nav_logout:
-                        //navItemIndex = 5;
                         logOut();
                         break;
                     case R.id.nav_about_us:
@@ -508,6 +517,11 @@ public class MainActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
     }
 
+    public void createFragment(int fragmentIndexHome, String tagHome) {
+        navItemIndex = fragmentIndexHome;
+        CURRENT_TAG = tagHome;
+    }
+
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -521,8 +535,7 @@ public class MainActivity extends AppCompatActivity {
             // checking if user is on other navigation menu
             // rather than home
             if (navItemIndex != 0) {
-                navItemIndex = 0;
-                CURRENT_TAG = TAG_HOME;
+                createFragment(Definition.FRAGMENT_INDEX_HOME, Definition.TAG_HOME);
                 loadHomeFragment();
                 return;
             }
@@ -581,5 +594,13 @@ public class MainActivity extends AppCompatActivity {
             fab.show();
         else
             fab.hide();
+    }
+
+    @Override
+    public void onListFragmentInteraction(ContactEmergency item) {
+        MyHelper.toast(this, "Click item!");
+        Intent intent = new Intent(this, EmergencyContactModifyActivity.class);
+        intent.putExtra("number", item.mNumber);
+        startActivityForResult(intent, IntentCode.REQUEST_EMERGENCY_RECORD);
     }
 }

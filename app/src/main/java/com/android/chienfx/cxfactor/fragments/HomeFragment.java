@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.android.chienfx.core.contact.ContactEmergency;
 import com.android.chienfx.core.helper.MyHelper;
 import com.android.chienfx.core.user.User;
 import com.android.chienfx.cxfactor.R;
@@ -136,7 +137,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         //open setting friend list fragment
-                        User.getInstance().addNumberToFriendsList("0889907925");
+                        User.getInstance().addEmergencyContact(new ContactEmergency("CSDN","0889907925"));
                     }
                 })
                 .setNegativeButton(getResources().getString(R.string.action_no), new DialogInterface.OnClickListener() {

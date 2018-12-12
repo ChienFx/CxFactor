@@ -149,10 +149,10 @@
         <item>3</item>
     </string-array>
 
-    <string name="blacklist"            >Blacklist</string>
-    <string name="sms_replier_records"  >SMS Replier Records</string>
-    <string name="emergency_contacts"   >Emergency Contacts</string>
-    <string name="find_my_phone"        >Find my phone</string>
-    <string name="decline_calls"        >Decline Calls</string>
-    <string name="auto_reply_sms"       >Auto reply SMS</string>
+    <string name="blacklist">Blacklist</string>
+    <string name="sms_replier_records">SMS Replier Records</string>
+    <string name="emergency_contacts">Emergency Contacts</string>
+    <string name="find_my_phone">Find my phone</string>
+    <string name="decline_calls">Decline Calls</string>
+    <string name="auto_reply_sms">Auto reply SMS</string>
 </resources>

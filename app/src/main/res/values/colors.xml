@@ -14,5 +14,6 @@
     <color name="red">#fd0000</color>
     <color name="green">#005b03</color>
     <color name="navigation">#dddddd</color>
+    <color name="black">#e2121111</color>
 
 </resources>

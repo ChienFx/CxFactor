@@ -1,12 +1,12 @@
 package com.android.chienfx.core.contact;
 
 public class Contact {
-    String mName;
-    String mNumber;
+    public String mName;
+    public String mNumber;
 
     public Contact(String name, String number){
         mName = name;
-        mName = number;
+        mNumber = number;
     }
 
     public String getContactName(){return mName;}

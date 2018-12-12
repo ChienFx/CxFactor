@@ -11,5 +11,5 @@
     <dimen name="profile_height">75dp</dimen>
     <dimen name="size_icon_inside_button">32dp</dimen>
     <dimen name="button_margin">10dp</dimen>
-    <dimen name="text_margin">16dp</dimen>
+    <dimen name="text_margin">15dp</dimen>
 </resources>

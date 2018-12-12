@@ -15,6 +15,25 @@ public final class Definition {
     public static final String DEFAULT_EMERGENCY_MESSAGE = "I am in the emergency situation, please help me !" ;
     public static final String SIGNATURE = "\n[Automatic SMS form CxFator]";
 
+    //Fragments Index
+    public static final int FRAGMENT_INDEX_HOME = 0;
+    public static final int FRAGMENT_INDEX_PHOTO = 1;
+    public static final int FRAGMENT_INDEX_MOVIE = 2;
+    public static final int FRAGMENT_INDEX_NOTIFICATION = 3;
+    public static final int FRAGMENT_INDEX_SETTING = 4;
+    public static final int FRAGMENT_INDEX_EMERGENCY_CONTACT = 5;
+    public static final int FRAGMENT_INDEX_EMERGENCY_CONTACT_RECORD = 6;
+
+
+    //Fragments Tag
+    public static final String TAG_HOME = "home";
+    public static final String TAG_PHOTOS = "photos";
+    public static final String TAG_MOVIES = "movies";
+    public static final String TAG_NOTIFICATIONS = "notifications";
+    public static final String TAG_SETTINGS = "settings";
+    public static final String TAG_EMERGENCY_CONTACT = "emergencycontact";
+    public static final String TAG_EMERGENCY_CONTACT_RECORD = "emergencycontactrecord";
+
 
     public static String[] PERMISSIONS = {
             Manifest.permission.READ_SMS,

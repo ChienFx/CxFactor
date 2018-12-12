@@ -24,4 +24,9 @@ public class MyHelper {
     }
 
 
+    public static String trimString(String string, int length) {
+        if(string.length() >= length)
+            return string.substring(0, length-1) + "...";
+        return string;
+    }
 }

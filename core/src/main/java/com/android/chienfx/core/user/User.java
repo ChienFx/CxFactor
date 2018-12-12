@@ -15,6 +15,7 @@ import com.android.chienfx.core.sms.SMSHelper;
 import com.android.chienfx.core.sms.SMSReplierRecord;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class User {
 
@@ -59,7 +60,7 @@ public class User {
         mBlackList.add(contact);
     }
 
-    public void addNumberToEmergencyContactList(ContactEmergency contactEmergency){
+    public void addEmergencyContact(ContactEmergency contactEmergency){
         mBlackList.remove(contactEmergency);
         mEmergencyContacts.add(contactEmergency);
     }
@@ -161,7 +162,21 @@ public class User {
         mEmergencyContacts = FirebaseHelper.downloadUserEmergencyContactList();
         mHistories = new ArrayList<>();
 
-        this.addNumberToEmergencyContactList(new ContactEmergency("chienfx","0971096050"));
+        this.addEmergencyContact(new ContactEmergency("chienfx","0971096050"));
+        this.addEmergencyContact(new ContactEmergency("H.Luon", "0883142564"));
+        this.addEmergencyContact(new ContactEmergency("N.Dinh", "0836524253"));
+        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0382887809"));
+        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
+        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
+        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
+        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
+        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
+        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
+        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
+        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
+        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
+        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
+        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
     }
 
     private Location getCurrentLocation() {
@@ -213,5 +228,22 @@ public class User {
 
     public void saveUserData() {
         //store class with current uid
+    }
+
+    public List<ContactEmergency> getEmergencyContactList() {
+        return this.mEmergencyContacts;
+    }
+
+    public ContactEmergency findEmergencyContactByNumber(String number) {
+        for(ContactEmergency contact: mEmergencyContacts){
+            if(contact.getContactNumber().equals(number)){
+                return contact;
+            }
+        }
+        return null;
+    }
+
+    public void deleteEmergencyContact(ContactEmergency contact) {
+        mEmergencyContacts.remove(contact);
     }
 }

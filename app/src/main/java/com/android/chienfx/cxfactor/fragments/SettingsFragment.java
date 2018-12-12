@@ -3,20 +3,24 @@ package com.android.chienfx.cxfactor.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
-import android.widget.Switch;
 
-import com.android.chienfx.core.helper.MyHelper;
+import com.android.chienfx.core.Definition;
 import com.android.chienfx.core.user.User;
 import com.android.chienfx.cxfactor.R;
+import com.android.chienfx.cxfactor.activities.MainActivity;
+
+import static com.android.chienfx.cxfactor.activities.MainActivity.CURRENT_TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -37,6 +41,7 @@ public class SettingsFragment extends Fragment {
     private String mParam2;
     private View mViewInstance;
     private OnFragmentInteractionListener mListener;
+    private Handler mHandler;
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -114,9 +119,31 @@ public class SettingsFragment extends Fragment {
         imbtnEmergencyContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                openEmergencyFragment();
+                ///MainActivity.createFragment(Definition.FRAGMENT_INDEX_EMERGENCY_CONTACT, Definition.TAG_EMERGENCY_CONTACT);
+                //MainActivity.appendHomeFragment();
             }
         });
+    }
+
+    private void openEmergencyFragment() {
+        Runnable mPendingRunnable = new Runnable() {
+            @Override
+            public void run() {
+                // update the main content by replacing fragments
+                Fragment fragment = new EmergencyContactFragment();
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
+                        android.R.anim.fade_out);
+                fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
+                fragmentTransaction.commitAllowingStateLoss();
+            }
+        };
+
+        // If mPendingRunnable is not null, then add to the message queue
+        if (mPendingRunnable != null) {
+            mHandler.post(mPendingRunnable);
+        }
     }
 
     private void loadCurrentState() {
@@ -126,6 +153,7 @@ public class SettingsFragment extends Fragment {
     }
 
     private void registerViews() {
+        mHandler = new Handler();
         swFindMyPhone = mViewInstance.findViewById(R.id.swFindMyPhone);
         swAutoReplySMS = mViewInstance.findViewById(R.id.swAutoReplySMS);
         swDeclineCall = mViewInstance.findViewById(R.id.swDeclineCall);
