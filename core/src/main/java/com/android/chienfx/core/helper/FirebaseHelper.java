@@ -3,7 +3,7 @@ package com.android.chienfx.core.helper;
 import android.location.Location;
 
 import com.android.chienfx.core.contact.Contact;
-import com.android.chienfx.core.contact.ContactEmergency;
+import com.android.chienfx.core.contact.EContact;
 import com.android.chienfx.core.sms.SMSReplierRecord;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -11,8 +11,8 @@ import java.util.ArrayList;
 
 public class FirebaseHelper {
 
-    public static ArrayList<ContactEmergency> downloadUserEmergencyContactList() {
-        ArrayList<ContactEmergency> list = new ArrayList<>();
+    public static ArrayList<EContact> downloadUserEmergencyContactList() {
+        ArrayList<EContact> list = new ArrayList<>();
         if(FirebaseAuth.getInstance().getCurrentUser() != null)
             ;//
         return list;

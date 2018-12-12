@@ -40,8 +40,9 @@
                 android:text="Message"
                 />
         </LinearLayout>
+
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/listEmergencyContact"
+            android:id="@+id/recyclerViewEContactFr"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:listitem="@layout/fragment_emergencycontact"

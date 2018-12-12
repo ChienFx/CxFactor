@@ -1,24 +1,31 @@
 package com.android.chienfx.core.user;
 
+import android.content.Context;
 import android.location.Location;
 import android.text.format.Time;
+import android.util.Log;
 
 import com.android.chienfx.core.Definition;
 import com.android.chienfx.core.contact.Contact;
-import com.android.chienfx.core.contact.ContactEmergency;
+import com.android.chienfx.core.contact.EContact;
 import com.android.chienfx.core.helper.FirebaseHelper;
+import com.android.chienfx.core.helper.InternalStorage;
+import com.android.chienfx.core.helper.MyHelper;
 import com.android.chienfx.core.history.History;
 import com.android.chienfx.core.history.HistoryEmergency;
 import com.android.chienfx.core.history.HistoryPushData;
 import com.android.chienfx.core.history.HistoryReplySMS;
 import com.android.chienfx.core.sms.SMSHelper;
 import com.android.chienfx.core.sms.SMSReplierRecord;
+import com.google.firebase.auth.FirebaseAuth;
 
+import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-public class User {
-
+public class User implements Serializable{
     private static final User ourInstance = new User();
     public static User getInstance() {
         return ourInstance;
@@ -26,7 +33,7 @@ public class User {
 
     ArrayList<SMSReplierRecord> mSMSReplierRecords;
     ArrayList<Contact> mBlackList; // detect sms and cancel (not reply)
-    ArrayList<ContactEmergency> mEmergencyContacts;
+    ArrayList<EContact> mEContacts;
     ArrayList<History> mHistories;
 
     Location mLastKnownLocation; //tracking gps
@@ -36,11 +43,11 @@ public class User {
     boolean mPermissionCall;
 
     private User() {
-        loadUserData();
+        initUserData();
     }
 
     public boolean isEmptyFriendsList() {
-        return mEmergencyContacts.isEmpty();
+        return mEContacts.isEmpty();
     }
 
     private String createLocationLink() {
@@ -51,29 +58,27 @@ public class User {
         return strLoc;
     }
 
-    public void addSMSReplierRecord(Time start, Time end, String content){
+    public void addSMSReplierRecord(int start, int end, String content){
         mSMSReplierRecords.add(new SMSReplierRecord(start, end, content));
     }
 
     public void addNumberToBlacklist(Contact contact){
-        mEmergencyContacts.remove(contact);
+        mEContacts.remove(contact);
         mBlackList.add(contact);
     }
 
-    public void addEmergencyContact(ContactEmergency contactEmergency){
+    public void addEmergencyContact(EContact contactEmergency){
         mBlackList.remove(contactEmergency);
-        mEmergencyContacts.add(contactEmergency);
+        mEContacts.add(contactEmergency);
     }
 
     public void replyInComeSMS(String smsSender, String smsBody){
         String strLog;
-        Time tNow = new Time();
         if(mPermissionSMS){
             if(!isInBlacklist(smsSender) && checkToPassAnalysiz(smsBody)){
-                tNow.setToNow();
-                String strSMSReply = getSMSReply(tNow);
+                String strSMSReply = getSMSReply();
                 boolean result = SMSHelper.sendDebugSMS(smsSender, strSMSReply);
-                strLog = "Replied SMS from "+smsSender+ " at "+tNow.toString();
+                strLog = "Replied SMS from "+smsSender;
                 writeHistory(new HistoryReplySMS(smsSender, smsBody, strSMSReply, result));
             }
             else{
@@ -113,10 +118,12 @@ public class User {
         return true; //passed
     }
 
-    private String getSMSReply(Time tNow) {
+    private String getSMSReply() {
+        Date now = new Date();
+        int tNow = now.getHours()*60 + now.getMinutes();
         for(int i = 0; i < mSMSReplierRecords.size(); i++)
             if(mSMSReplierRecords.get(i).checkInRangeTime(tNow)){
-                return mSMSReplierRecords.get(i).mContent;
+                return mSMSReplierRecords.get(i).getMessage();
             }
         return Definition.DEFAULT_SMS_REPLY;
     }
@@ -130,7 +137,7 @@ public class User {
 
     public int sendEmergencySMS() {
         int count = 0;
-        for(ContactEmergency contact: mEmergencyContacts){
+        for(EContact contact: mEContacts){
             String number = contact.getContactNumber();
             String message = contact.getContactMessage();
             if(contact.getLocationFlag() && mPermissionGPS)
@@ -144,13 +151,54 @@ public class User {
     }
 
 
-    public void loadUserData(){
-//        if(currentUID match with last saved user)
-//            loadLastSavedUser();
-//        else{
-//            loadUserDataFromFirebase();
-//        }
+    public void loadUserData(Context context){
+        try {
+            UserCopier userCopier = (UserCopier) InternalStorage.readUserData(context);
+            if(userCopier==null)
+            {
+                MyHelper.toast(context, "userCopier NULL");
+            }
+            else if(FirebaseAuth.getInstance().getCurrentUser().getUid().compareTo(userCopier.getmUid())==0){
+                mPermissionGPS = userCopier.getmPermissionGPS();
+                mPermissionCall = userCopier.getmPermissionCall();
+                mPermissionSMS = userCopier.getmPermissionSMS();
+                mLastKnownLocation = userCopier.getmLastKnownLocation();
+                mSMSReplierRecords = userCopier.getmSMSReplierRecords();
+                mBlackList = userCopier.getmBlackList();
+                mHistories = userCopier.getmHistories();
+                mEContacts = userCopier.getmEContacts();
+                MyHelper.toast(context, "Loading from file done!");
+            }
+            else{
+                MyHelper.toast(context, "Wrong UID");
+                loadUserDataFromFirebase();
+            }
+        }
+        catch (Exception e){
+            MyHelper.toast(context, "Loading from file failed!");
+            Log.d("MyREAD", e.getMessage());
+        }
 
+    }
+
+    public void saveUserData(Context context) {
+        //store class with current uid
+        try {
+            String uid = FirebaseAuth.getInstance().getUid();
+            UserCopier userCopier = new UserCopier(uid, mSMSReplierRecords, mBlackList, mEContacts, mHistories, mLastKnownLocation, mPermissionSMS, mPermissionGPS, mPermissionCall);
+            InternalStorage.writeUserData(context, userCopier);
+            MyHelper.toast(context, "Store data done!");
+        }
+        catch (Exception e){
+            MyHelper.toast(context, "Store data failed!");
+            Log.d("MyWRITE", e.getMessage());
+        }
+
+        pushUserDataToFirebase();
+
+    }
+
+    private void initUserData() {
         mLastKnownLocation = getCurrentLocation();
         mPermissionSMS = true;
         mPermissionGPS = true;
@@ -159,24 +207,13 @@ public class User {
         mLastKnownLocation = null;
         mBlackList =  FirebaseHelper.downloadUserBlacklist();
         mSMSReplierRecords = FirebaseHelper.downloadUserSMSReplierRecords();
-        mEmergencyContacts = FirebaseHelper.downloadUserEmergencyContactList();
+        mEContacts = FirebaseHelper.downloadUserEmergencyContactList();
         mHistories = new ArrayList<>();
 
-        this.addEmergencyContact(new ContactEmergency("chienfx","0971096050"));
-        this.addEmergencyContact(new ContactEmergency("H.Luon", "0883142564"));
-        this.addEmergencyContact(new ContactEmergency("N.Dinh", "0836524253"));
-        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0382887809"));
-        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
-        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
-        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
-        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
-        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
-        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
-        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
-        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
-        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
-        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
-        this.addEmergencyContact(new ContactEmergency("V.Loi",  "0836123453"));
+        this.addEmergencyContact(new EContact("Chien","0971096050"));
+        this.addEmergencyContact(new EContact("H.Luon", "0883142564"));
+        this.addEmergencyContact(new EContact("N.Dinh", "0836524253"));
+        this.addEmergencyContact(new EContact("V.Loi",  "0382887809"));
     }
 
     private Location getCurrentLocation() {
@@ -187,7 +224,7 @@ public class User {
         pushDataToServer();
         pushLocationToServer();
         mHistories.clear();
-        mEmergencyContacts.clear();
+        mEContacts.clear();
         mBlackList.clear();
         mSMSReplierRecords.clear();
 
@@ -199,6 +236,14 @@ public class User {
     public void setCurrentLocation(Location loc) {
         pushLocationToServer();
         this.mLastKnownLocation = loc;
+    }
+
+    private void loadUserDataFromFirebase() {
+
+    }
+
+    private void pushUserDataToFirebase() {
+
     }
 
     public boolean getFindPhone() {
@@ -225,25 +270,86 @@ public class User {
         mPermissionCall = value;
     }
 
-
-    public void saveUserData() {
-        //store class with current uid
+    public List<EContact> getEmergencyContactList() {
+        return this.mEContacts;
     }
 
-    public List<ContactEmergency> getEmergencyContactList() {
-        return this.mEmergencyContacts;
-    }
-
-    public ContactEmergency findEmergencyContactByNumber(String number) {
-        for(ContactEmergency contact: mEmergencyContacts){
-            if(contact.getContactNumber().equals(number)){
-                return contact;
-            }
-        }
+    public EContact getEContactByIndex(int index) {
+        if(index>=0 && index < mEContacts.size())
+            return mEContacts.get(index);
         return null;
     }
 
-    public void deleteEmergencyContact(ContactEmergency contact) {
-        mEmergencyContacts.remove(contact);
+    public void deleteEmergencyContact(EContact contact) {
+        mEContacts.remove(contact);
+    }
+
+    public class UserCopier implements Serializable{
+        ArrayList<SMSReplierRecord> mSMSReplierRecords;
+        ArrayList<Contact> mBlackList; // detect sms and cancel (not reply)
+        ArrayList<EContact> mEContacts;
+        ArrayList<History> mHistories;
+
+        Location mLastKnownLocation; //tracking gps
+
+        boolean mPermissionSMS;
+        boolean mPermissionGPS;
+        boolean mPermissionCall;
+
+        String mUid;
+
+        UserCopier(String uid,
+                   ArrayList<SMSReplierRecord> smsReplierRecords,
+                ArrayList<Contact> blackList,
+                ArrayList<EContact> eContacts,
+                ArrayList<History> histories,
+                Location lastKnownLocation,
+                boolean permissionSMS,
+                boolean permissionGPS,
+                boolean permissionCall){
+            mUid = uid;
+            mSMSReplierRecords = smsReplierRecords;
+            mBlackList = blackList;
+            mEContacts = eContacts;
+            mHistories =histories;
+            mLastKnownLocation = lastKnownLocation;
+            mPermissionCall = permissionCall;
+            mPermissionGPS = permissionGPS;
+            mPermissionSMS = permissionSMS;
+        }
+
+        public String getmUid(){return mUid;}
+
+        public ArrayList<Contact> getmBlackList() {
+            return mBlackList;
+        }
+
+        public ArrayList<EContact> getmEContacts() {
+            return mEContacts;
+        }
+
+        public ArrayList<History> getmHistories() {
+            return mHistories;
+        }
+
+        public ArrayList<SMSReplierRecord> getmSMSReplierRecords() {
+            return mSMSReplierRecords;
+        }
+
+        public Location getmLastKnownLocation() {
+            return mLastKnownLocation;
+        }
+
+        public boolean getmPermissionGPS() {
+            return mPermissionGPS;
+        }
+
+        public boolean getmPermissionSMS() {
+            return mPermissionSMS;
+        }
+
+        public boolean getmPermissionCall() {
+            return mPermissionCall;
+        }
     }
 }

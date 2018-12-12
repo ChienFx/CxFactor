@@ -31,12 +31,10 @@ import android.widget.Toast;
 
 import com.android.chienfx.core.Definition;
 import com.android.chienfx.core.IntentCode;
-import com.android.chienfx.core.contact.ContactEmergency;
 import com.android.chienfx.core.helper.MyHelper;
 import com.android.chienfx.core.services.SMSReceiveService;
 import com.android.chienfx.core.user.User;
 import com.android.chienfx.cxfactor.R;
-import com.android.chienfx.cxfactor.fragments.EmergencyContactFragment;
 import com.android.chienfx.cxfactor.fragments.HomeFragment;
 import com.android.chienfx.cxfactor.fragments.MoviesFragment;
 import com.android.chienfx.cxfactor.fragments.NotificationsFragment;
@@ -50,7 +48,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class MainActivity extends AppCompatActivity implements EmergencyContactFragment.OnListFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity {
     private static final MainActivity ourInstance = new MainActivity();
     public static MainActivity getInstance() {
         return ourInstance;
@@ -92,6 +90,8 @@ public class MainActivity extends AppCompatActivity implements EmergencyContactF
 
         registerViews();
 
+        loadUserData();
+
         if (savedInstanceState == null) {
             navItemIndex = 0;
             CURRENT_TAG = Definition.TAG_HOME;
@@ -107,13 +107,9 @@ public class MainActivity extends AppCompatActivity implements EmergencyContactF
             login();
         }
         else {
-            MyHelper.toast(this, "Logined!");
-            loadUserData();
             checkAllPermissions();
             updateUI();
         }
-
-
     }
 
     @Override
@@ -128,12 +124,18 @@ public class MainActivity extends AppCompatActivity implements EmergencyContactF
         super.onPause();
     }
 
+    @Override
+    protected void onDestroy() {
+        saveUserData();
+        super.onDestroy();
+    }
+
     private void loadUserData() {
-        User.getInstance().loadUserData();
+        User.getInstance().loadUserData(this);
     }
 
     private void saveUserData(){
-        User.getInstance().saveUserData();
+        User.getInstance().saveUserData(this);
     }
 
     private void registerViews() {
@@ -181,17 +183,10 @@ public class MainActivity extends AppCompatActivity implements EmergencyContactF
                         MyHelper.toast(this, "login successful");
                         loadUserData();
                         checkAllPermissions();
-//                        updateUI();
                     }
                 }
                 else{
                     MyHelper.toast(this, "Login Failed");
-                }
-                break;
-            case IntentCode.REQUEST_EMERGENCY_RECORD:
-                if(resultCode==IntentCode.RESULT_EMERGENC_CONTACT_RECORD){
-                    MyHelper.toast(this, data.getStringExtra("action"));
-                    //EmergencyContactFragment.refreshList();
                 }
                 break;
         }
@@ -307,6 +302,7 @@ public class MainActivity extends AppCompatActivity implements EmergencyContactF
         {
             showProgressDialog();
             mAuth.signOut();
+            saveUserData();
             User.getInstance().resetUser();
             hideProgressDialog();
             login();
@@ -349,7 +345,7 @@ public class MainActivity extends AppCompatActivity implements EmergencyContactF
         // selecting appropriate nav menu item
         selectNavMenu();
 
-        // set toolbar title
+        // set toolbar mName
         setToolbarTitle();
 
         // if user select the current navigation menu again, don't do anything
@@ -417,12 +413,6 @@ public class MainActivity extends AppCompatActivity implements EmergencyContactF
                 // settings fragment
                 SettingsFragment settingsFragment = new SettingsFragment();
                 return settingsFragment;
-
-            case Definition.FRAGMENT_INDEX_EMERGENCY_CONTACT:
-                // settings fragment
-                EmergencyContactFragment emergencyContactFragment = new EmergencyContactFragment();
-                return emergencyContactFragment;
-
 
             default:
                 return new HomeFragment();
@@ -594,13 +584,5 @@ public class MainActivity extends AppCompatActivity implements EmergencyContactF
             fab.show();
         else
             fab.hide();
-    }
-
-    @Override
-    public void onListFragmentInteraction(ContactEmergency item) {
-        MyHelper.toast(this, "Click item!");
-        Intent intent = new Intent(this, EmergencyContactModifyActivity.class);
-        intent.putExtra("number", item.mNumber);
-        startActivityForResult(intent, IntentCode.REQUEST_EMERGENCY_RECORD);
     }
 }

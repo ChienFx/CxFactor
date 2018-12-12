@@ -1,6 +1,7 @@
 package com.android.chienfx.cxfactor.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,6 +20,7 @@ import com.android.chienfx.core.Definition;
 import com.android.chienfx.core.user.User;
 import com.android.chienfx.cxfactor.R;
 import com.android.chienfx.cxfactor.activities.MainActivity;
+import com.android.chienfx.cxfactor.activities.econtact.EContactListActivity;
 
 import static com.android.chienfx.cxfactor.activities.MainActivity.CURRENT_TAG;
 
@@ -116,34 +118,13 @@ public class SettingsFragment extends Fragment {
                 user.setDeclineCall(isChecked);
             }
         });
+
         imbtnEmergencyContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openEmergencyFragment();
-                ///MainActivity.createFragment(Definition.FRAGMENT_INDEX_EMERGENCY_CONTACT, Definition.TAG_EMERGENCY_CONTACT);
-                //MainActivity.appendHomeFragment();
+                startActivity(new Intent(getContext(), EContactListActivity.class));
             }
         });
-    }
-
-    private void openEmergencyFragment() {
-        Runnable mPendingRunnable = new Runnable() {
-            @Override
-            public void run() {
-                // update the main content by replacing fragments
-                Fragment fragment = new EmergencyContactFragment();
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,
-                        android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame, fragment, CURRENT_TAG);
-                fragmentTransaction.commitAllowingStateLoss();
-            }
-        };
-
-        // If mPendingRunnable is not null, then add to the message queue
-        if (mPendingRunnable != null) {
-            mHandler.post(mPendingRunnable);
-        }
     }
 
     private void loadCurrentState() {

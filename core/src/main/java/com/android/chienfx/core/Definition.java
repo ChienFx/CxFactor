@@ -33,6 +33,7 @@ public final class Definition {
     public static final String TAG_SETTINGS = "settings";
     public static final String TAG_EMERGENCY_CONTACT = "emergencycontact";
     public static final String TAG_EMERGENCY_CONTACT_RECORD = "emergencycontactrecord";
+    public static final String LOCAL_FILE_NAME = "__data.txt";
 
 
     public static String[] PERMISSIONS = {

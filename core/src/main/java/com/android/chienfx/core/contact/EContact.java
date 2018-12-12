@@ -3,17 +3,18 @@ package com.android.chienfx.core.contact;
 import com.android.chienfx.core.Definition;
 
 import java.io.BufferedOutputStream;
+import java.io.Serializable;
 
-public class ContactEmergency extends Contact {
+public class EContact extends Contact implements Serializable {
     public Boolean mLocationSend;
     public String mMessage;
-    public ContactEmergency(String name, String number, String message, Boolean locationFlag) {
+    public EContact(String name, String number, String message, Boolean locationFlag) {
         super(name, number);
         mLocationSend = locationFlag;
         mMessage = message;
     }
 
-    public ContactEmergency(String name, String number) {
+    public EContact(String name, String number) {
         super(name, number);
         mLocationSend = true;
         mMessage = Definition.DEFAULT_EMERGENCY_MESSAGE;

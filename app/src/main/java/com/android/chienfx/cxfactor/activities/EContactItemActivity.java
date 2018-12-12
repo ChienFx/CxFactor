@@ -12,34 +12,33 @@ import android.support.v7.widget.AppCompatCheckBox;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import com.android.chienfx.core.Definition;
 import com.android.chienfx.core.IntentCode;
-import com.android.chienfx.core.contact.ContactEmergency;
+import com.android.chienfx.core.contact.EContact;
 import com.android.chienfx.core.helper.MyHelper;
 import com.android.chienfx.core.user.User;
 import com.android.chienfx.cxfactor.R;
 
-public class EmergencyContactModifyActivity extends AppCompatActivity {
+public class EContactItemActivity extends AppCompatActivity {
 
     EditText edContact, edMessage;
     AppCompatCheckBox cbLocation;
     ImageButton btnSave, btnDel;
     String mName, mNumber, mMessage;
-    Boolean mLocation, mAddNew = false;
-    ContactEmergency mContact;
+    Boolean mLocation, mAddNew = false, lockMessage = false;
+    EContact mContact;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_emergency_contact_modify);
+        setContentView(R.layout.activity_econtact_item);
         Intent intent = getIntent();
-        mNumber = intent.getStringExtra("number");
-        mContact = User.getInstance().findEmergencyContactByNumber(mNumber);
+
+        int position = intent.getIntExtra("position", -1);
+        mContact = User.getInstance().getEContactByIndex(position);
         if(mContact==null) {
-            mContact = new ContactEmergency("", "");
+            mContact = new EContact("[Click here]", "");
             mAddNew = true;
         }
         initContact();
@@ -55,36 +54,38 @@ public class EmergencyContactModifyActivity extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getUiValue();
-                saveContact();
-                finishLoginActivity(IntentCode.RESULT_EMERGENC_CONTACT_RECORD, "Saved");
+                if(mNumber.length()<1 || mName.compareTo("[Click here]")==0){
+                    MyHelper.toast(getApplicationContext(), "Missing Contact!");
+                }
+                else if(lockMessage)
+                    MyHelper.toast(getApplicationContext(), "Missing Emergency Message!");
+                else {
+                    getUiValue();
+                    saveContact();
+                    finish();
+                }
             }
         });
+
         btnDel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!mAddNew){//edit
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(EmergencyContactModifyActivity.this);
-                    builder.setTitle("DELETE");
-                    builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            User.getInstance().deleteEmergencyContact(mContact);
-                            finishLoginActivity(IntentCode.RESULT_EMERGENC_CONTACT_RECORD, "Deleted");
-                        }
-                    });
-                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    });
-                    builder.show();
-                }
-                else
-                {
-                    finishLoginActivity(IntentCode.RESULT_EMERGENC_CONTACT_RECORD, "Canceled");
-                }
+                final AlertDialog.Builder builder = new AlertDialog.Builder(EContactItemActivity.this);
+                builder.setTitle("DELETE");
+                builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        User.getInstance().deleteEmergencyContact(mContact);
+                        finishLoginActivity(IntentCode.RESULT_EMERGENC_CONTACT_RECORD, "Deleted");
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                builder.show();
             }
         });
         edContact.setOnClickListener(new View.OnClickListener() {
@@ -103,13 +104,14 @@ public class EmergencyContactModifyActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String str = String.valueOf(edMessage.getText()).trim();
                 if(str.length()>1) {
+                    lockMessage = false;
                     edMessage.setCompoundDrawablesWithIntrinsicBounds(0,0, 0,0);
                 }
                 else {
+                    lockMessage = true;
                     edMessage.setCompoundDrawablesWithIntrinsicBounds(0,0, R.drawable.icon_alert,0);
                 }
 
-                changeSaveButtonState();
             }
 
             @Override
@@ -123,13 +125,6 @@ public class EmergencyContactModifyActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    private void changeSaveButtonState() {
-        if(edMessage.getText().length() > 0 && edContact.getText().length() > 0)
-            btnSave.setEnabled(true);
-        else
-            btnSave.setEnabled(false);
     }
 
     private void registerViews() {
@@ -160,7 +155,6 @@ public class EmergencyContactModifyActivity extends AppCompatActivity {
         edContact.setText(mName+"\n"+mNumber);
         cbLocation.setChecked(mLocation);
         edMessage.setText(mMessage);
-        changeSaveButtonState();
     }
 
     private void getUiValue(){
@@ -178,6 +172,7 @@ public class EmergencyContactModifyActivity extends AppCompatActivity {
             mNumber = cursor.getString(column);
             column = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
             mName = cursor.getString(column);
+
             edContact.setText(mName+"\n"+mNumber);
         }
     }

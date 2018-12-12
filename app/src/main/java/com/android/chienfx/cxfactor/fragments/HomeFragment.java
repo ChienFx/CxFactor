@@ -3,6 +3,7 @@ package com.android.chienfx.cxfactor.fragments;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,10 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.android.chienfx.core.contact.ContactEmergency;
+import com.android.chienfx.core.contact.EContact;
 import com.android.chienfx.core.helper.MyHelper;
 import com.android.chienfx.core.user.User;
 import com.android.chienfx.cxfactor.R;
+import com.android.chienfx.cxfactor.activities.econtact.EContactListActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -107,7 +109,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         if(User.getInstance().isEmptyFriendsList()){
-                            MyHelper.toast(getContext(), "Your friends list is empty. Please fill Friends List first.");
+                            //MyHelper.toast(getContext(), "Your friends list is empty. Please fill Friends List first.");
                             requestGotoSettingFriendsList();
                         }
                         else {
@@ -137,7 +139,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         //open setting friend list fragment
-                        User.getInstance().addEmergencyContact(new ContactEmergency("CSDN","0889907925"));
+                        //User.getInstance().addEmergencyContact(new EContact("CSDN","0889907925"));
+                        startActivity(new Intent(getContext(), EContactListActivity.class));
                     }
                 })
                 .setNegativeButton(getResources().getString(R.string.action_no), new DialogInterface.OnClickListener() {
