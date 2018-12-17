@@ -1,4 +1,4 @@
-package com.android.chienfx.cxfactor.activities;
+package com.android.chienfx.cxfactor.activities.econtact;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -77,7 +77,8 @@ public class EContactItemActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         User.getInstance().deleteEmergencyContact(mContact);
-                        finishLoginActivity(IntentCode.RESULT_EMERGENC_CONTACT_RECORD, "Deleted");
+                        finish();
+                        //finishLoginActivity(IntentCode.RESULT_EMERGENC_CONTACT_RECORD, "Deleted");
                     }
                 });
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -175,22 +176,6 @@ public class EContactItemActivity extends AppCompatActivity {
 
             edContact.setText(mName+"\n"+mNumber);
         }
-    }
-
-    @Override
-    public void finishActivity(int requestCode) {
-        super.finishActivity(requestCode);
-    }
-
-    void finishLoginActivity(int resultCode, Object extraData) {
-        Intent resultLoginIntent = new Intent();
-        //put login access tokent to intent
-        if(resultCode == IntentCode.RESULT_EMERGENC_CONTACT_RECORD){
-            if(extraData!=null)
-                resultLoginIntent.putExtra("action", (String)extraData);
-        }
-        setResult(resultCode, resultLoginIntent);
-        finish(); //finish this activity with resultcode returned
     }
 
 }

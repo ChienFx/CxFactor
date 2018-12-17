@@ -10,9 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -36,9 +34,8 @@ import com.android.chienfx.core.services.SMSReceiveService;
 import com.android.chienfx.core.user.User;
 import com.android.chienfx.cxfactor.R;
 import com.android.chienfx.cxfactor.fragments.HomeFragment;
-import com.android.chienfx.cxfactor.fragments.MoviesFragment;
-import com.android.chienfx.cxfactor.fragments.NotificationsFragment;
-import com.android.chienfx.cxfactor.fragments.PhotosFragment;
+import com.android.chienfx.cxfactor.fragments.history.NotificationsFragment;
+import com.android.chienfx.cxfactor.fragments.WhereIWasFragment;
 import com.android.chienfx.cxfactor.fragments.SettingsFragment;
 import com.android.chienfx.cxfactor.login.Login;
 import com.android.chienfx.cxfactor.others.CircleTransform;
@@ -63,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imgNavHeaderBg, imgProfile;
     private TextView txtName, txtWebsite;
     private Toolbar toolbar;
-    private FloatingActionButton fab;
 
     // index to identify current nav menu item
     public static int navItemIndex = 0;
@@ -146,7 +142,6 @@ public class MainActivity extends AppCompatActivity {
 
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
-        fab = findViewById(R.id.fab);
 
         // Navigation view header
         navHeader = navigationView.getHeaderView(0);
@@ -157,14 +152,6 @@ public class MainActivity extends AppCompatActivity {
 
         // load toolbar titles from string resources
         activityTitles = getResources().getStringArray(R.array.nav_item_activity_titles);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
     }
 
     private void login() {
@@ -334,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
                 .into(imgProfile);
 
         // showing dot next to notifications label
-        navigationView.getMenu().getItem(3).setActionView(R.layout.menu_dot);
+        navigationView.getMenu().getItem(2).setActionView(R.layout.menu_dot);
     }
 
     /***
@@ -345,16 +332,13 @@ public class MainActivity extends AppCompatActivity {
         // selecting appropriate nav menu item
         selectNavMenu();
 
-        // set toolbar mName
+        // set toolbar mStart
         setToolbarTitle();
 
         // if user select the current navigation menu again, don't do anything
         // just close the navigation drawer
         if (getSupportFragmentManager().findFragmentByTag(CURRENT_TAG) != null) {
             drawer.closeDrawers();
-
-            // show or hide the fab button
-            toggleFab();
             return;
         }
 
@@ -380,9 +364,6 @@ public class MainActivity extends AppCompatActivity {
             mHandler.post(mPendingRunnable);
         }
 
-        // show or hide the fab button
-        toggleFab();
-
         //Closing drawer on item click
         drawer.closeDrawers();
 
@@ -396,14 +377,11 @@ public class MainActivity extends AppCompatActivity {
                 // home
                 HomeFragment homeFragment = new HomeFragment();
                 return homeFragment;
-            case Definition.FRAGMENT_INDEX_PHOTO:
+            case Definition.FRAGMENT_INDEX_WHEREIWAS:
                 // photos
-                PhotosFragment photosFragment = new PhotosFragment();
-                return photosFragment;
-            case Definition.FRAGMENT_INDEX_MOVIE:
-                // movies fragment
-                MoviesFragment moviesFragment = new MoviesFragment();
-                return moviesFragment;
+                WhereIWasFragment whereIWasFragment = new WhereIWasFragment();
+                return whereIWasFragment;
+
             case Definition.FRAGMENT_INDEX_NOTIFICATION:
                 // notifications fragment
                 NotificationsFragment notificationsFragment = new NotificationsFragment();
@@ -441,13 +419,10 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.nav_home:
                         createFragment(Definition.FRAGMENT_INDEX_HOME, Definition.TAG_HOME);
                         break;
-                    case R.id.nav_photos:
-                        createFragment(Definition.FRAGMENT_INDEX_PHOTO, Definition.TAG_PHOTOS);
+                    case R.id.nav_where_i_was:
+                        createFragment(Definition.FRAGMENT_INDEX_WHEREIWAS, Definition.TAG_WHEREIWAS);
                         break;
-                    case R.id.nav_movies:
-                        createFragment(Definition.FRAGMENT_INDEX_MOVIE, Definition.TAG_MOVIES);
-                        break;
-                    case R.id.nav_notifications:
+                    case R.id.nav_histories:
                         createFragment(Definition.FRAGMENT_INDEX_NOTIFICATION, Definition.TAG_NOTIFICATIONS);
                         break;
                     case R.id.nav_settings:
@@ -576,13 +551,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    // show or hide the fab
-    private void toggleFab() {
-        if (navItemIndex == -1)
-            fab.show();
-        else
-            fab.hide();
     }
 }

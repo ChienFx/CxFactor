@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.android.chienfx.core.contact.EContact;
 import com.android.chienfx.core.helper.MyHelper;
 import com.android.chienfx.core.user.User;
 import com.android.chienfx.cxfactor.R;
@@ -91,11 +90,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
     private void registerViews() {
         btnRescue = mViewInstance.findViewById(R.id.btn_Rescue);
-        btnReplySMS = mViewInstance.findViewById(R.id.btn_ReplySMS);
-        btnFossick = mViewInstance.findViewById(R.id.btn_Fossick);
-        btnHistory = mViewInstance.findViewById(R.id.btn_History);
+        btnFossick = mViewInstance.findViewById(R.id.btn_whereiwas);
+//        btnHistory = mViewInstance.findViewById(R.id.btn_History);
 
         btnRescue.setOnClickListener(this);
+        btnFossick.setOnClickListener(this);
+//        btnHistory.setOnClickListener(this);
     }
     @Override
     public void onClick(View v) {
@@ -127,6 +127,21 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 });
                 builder.show();
                 break;
+
+            case R.id.btn_whereiwas:
+                AlertDialog.Builder builderF = new AlertDialog.Builder(getActivity());
+                builderF.setTitle("Fossick");
+                builderF.setMessage("Fossick module is in development phase.\nComing Soon");
+                builderF.setPositiveButton(R.string.action_ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+
+                    }
+                });
+                builderF.show();
+                break;
+
         }
     }
 

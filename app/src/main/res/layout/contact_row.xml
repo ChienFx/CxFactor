@@ -8,24 +8,18 @@
     >
 
     <TextView
-        android:id="@+id/tvEContactName"
+        android:id="@+id/tvContactName"
         style="@style/listview_econtact_item"
-        android:text="Chienfx00000234234"
-        android:layout_width="@dimen/econtact_name_item_length"
-        android:maxLength="9"
+        android:text="123456789877"
+        android:layout_width="120dp"
+        android:maxLength="12"
         />
     <TextView
-        android:id="@+id/tvEContactNumber"
+        android:id="@+id/tvContactNumber"
         style="@style/listview_econtact_item"
         android:text="+84971096050"
+        android:layout_width="match_parent"
         android:maxLength="13"
-        />
-
-    <TextView
-        android:id="@+id/tvEContactMessage"
-        style="@style/listview_econtact_item"
-        android:text="I miss you baby"
-        android:maxLength="14"
         />
 
 </LinearLayout>

@@ -89,8 +89,11 @@
             android:name=".activities.PrivacyPolicyActivity"
             android:label="@string/title_activity_privacy_policy"
             android:theme="@style/AppTheme" />
-        <activity android:name=".activities.EContactItemActivity" />
-        <activity android:name=".activities.econtact.EContactListActivity"></activity>
+        <activity android:name=".activities.econtact.EContactItemActivity" />
+        <activity android:name=".activities.econtact.EContactListActivity" />
+        <activity android:name=".activities.smsreplier.SmsReplierListActivity" />
+        <activity android:name=".activities.smsreplier.SmsReplierItemActivity" />
+        <activity android:name=".activities.blacklist.BlacklistActivity" />
     </application>
 
 </manifest>

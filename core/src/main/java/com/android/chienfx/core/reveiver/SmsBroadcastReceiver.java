@@ -8,6 +8,7 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 
 
+import com.android.chienfx.core.helper.MyHelper;
 import com.android.chienfx.core.user.User;
 
 /**
@@ -29,8 +30,9 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
             }
 
             Log.d("SMS income: ", smsBody);
-            //SMSHelper.replySMS()
-            User.getInstance().replyInComeSMS(smsSender, smsBody);
+
+            String strResult = User.getInstance().replyInComeSMS(smsSender, smsBody);
+            MyHelper.toast(context, strResult +" from "+smsSender);
         }
     }
 }

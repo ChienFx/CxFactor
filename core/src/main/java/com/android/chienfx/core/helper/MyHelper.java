@@ -29,4 +29,18 @@ public class MyHelper {
             return string.substring(0, length-1) + "...";
         return string;
     }
+
+
+    public static String getTimeString(int t){
+        int h = t/60;
+
+        String sH = String.valueOf(h);
+        if(h<10) sH = "0"+sH;
+
+        int m = t%60;
+        String sM = String.valueOf(m);
+        if(m<10) sM = "0"+sM;
+
+        return sH + ":" + sM;
+    }
 }

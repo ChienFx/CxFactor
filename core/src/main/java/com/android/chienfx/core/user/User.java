@@ -2,7 +2,6 @@ package com.android.chienfx.core.user;
 
 import android.content.Context;
 import android.location.Location;
-import android.text.format.Time;
 import android.util.Log;
 
 import com.android.chienfx.core.Definition;
@@ -19,10 +18,9 @@ import com.android.chienfx.core.sms.SMSHelper;
 import com.android.chienfx.core.sms.SMSReplierRecord;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
 public class User implements Serializable{
@@ -35,6 +33,7 @@ public class User implements Serializable{
     ArrayList<Contact> mBlackList; // detect sms and cancel (not reply)
     ArrayList<EContact> mEContacts;
     ArrayList<History> mHistories;
+    ArrayList<Location> mLocationList;
 
     Location mLastKnownLocation; //tracking gps
 
@@ -58,37 +57,40 @@ public class User implements Serializable{
         return strLoc;
     }
 
-    public void addSMSReplierRecord(int start, int end, String content){
-        mSMSReplierRecords.add(new SMSReplierRecord(start, end, content));
+    public void addSMSReplierRecord(SMSReplierRecord smsReplierRecord){
+        mSMSReplierRecords.add(smsReplierRecord);
     }
 
     public void addNumberToBlacklist(Contact contact){
-        mEContacts.remove(contact);
         mBlackList.add(contact);
     }
 
     public void addEmergencyContact(EContact contactEmergency){
-        mBlackList.remove(contactEmergency);
-        mEContacts.add(contactEmergency);
+        if(!mEContacts.contains(contactEmergency)){
+            mEContacts.add(contactEmergency);
+        }
+
     }
 
-    public void replyInComeSMS(String smsSender, String smsBody){
-        String strLog;
+    public String replyInComeSMS(String smsSender, String smsBody){
+        String strLog;String strSMSReply = "";
+        Boolean result = false;
         if(mPermissionSMS){
             if(!isInBlacklist(smsSender) && checkToPassAnalysiz(smsBody)){
-                String strSMSReply = getSMSReply();
-                boolean result = SMSHelper.sendDebugSMS(smsSender, strSMSReply);
-                strLog = "Replied SMS from "+smsSender;
-                writeHistory(new HistoryReplySMS(smsSender, smsBody, strSMSReply, result));
+                strSMSReply = getSMSReply();
+                result = SMSHelper.sendDebugSMS(smsSender, strSMSReply);
+                strLog = "Replied SMS";
             }
             else{
-                writeHistory(new HistoryReplySMS(smsSender, smsBody, "In Blaclist or did not pass Analyze Ad Filter", History.ACTION_FAIL));
+                strLog = "Skipped SMS";
             }
         }
         else
         {
-            writeHistory(new HistoryReplySMS(smsSender, smsBody, "Deny Permission", History.ACTION_FAIL));
+            strLog = "Denied SMS permission to reply SMS";
         }
+        writeHistory(new HistoryReplySMS(strLog, smsSender, smsBody, strSMSReply, result));
+        return strLog;
     }
 
     private void writeHistory(History history) {
@@ -119,8 +121,10 @@ public class User implements Serializable{
     }
 
     private String getSMSReply() {
-        Date now = new Date();
-        int tNow = now.getHours()*60 + now.getMinutes();
+        Calendar calendar = Calendar.getInstance();
+
+        int tNow = calendar.get(Calendar.HOUR_OF_DAY) + calendar.get(Calendar.MINUTE);
+
         for(int i = 0; i < mSMSReplierRecords.size(); i++)
             if(mSMSReplierRecords.get(i).checkInRangeTime(tNow)){
                 return mSMSReplierRecords.get(i).getMessage();
@@ -159,14 +163,15 @@ public class User implements Serializable{
                 MyHelper.toast(context, "userCopier NULL");
             }
             else if(FirebaseAuth.getInstance().getCurrentUser().getUid().compareTo(userCopier.getmUid())==0){
-                mPermissionGPS = userCopier.getmPermissionGPS();
-                mPermissionCall = userCopier.getmPermissionCall();
-                mPermissionSMS = userCopier.getmPermissionSMS();
-                mLastKnownLocation = userCopier.getmLastKnownLocation();
-                mSMSReplierRecords = userCopier.getmSMSReplierRecords();
-                mBlackList = userCopier.getmBlackList();
-                mHistories = userCopier.getmHistories();
-                mEContacts = userCopier.getmEContacts();
+                mPermissionGPS = userCopier.getPermissionGPS();
+                mPermissionCall = userCopier.getPermissionCall();
+                mPermissionSMS = userCopier.getPermissionSMS();
+                mLastKnownLocation = userCopier.getLastKnownLocation();
+                mSMSReplierRecords = (ArrayList<SMSReplierRecord>) userCopier.getSMSReplierRecords();
+                mBlackList = userCopier.getBlackList();
+                mHistories = userCopier.getHistories();
+                mEContacts = userCopier.getEContacts();
+                mLocationList = userCopier.getLocaionList();
                 MyHelper.toast(context, "Loading from file done!");
             }
             else{
@@ -185,7 +190,7 @@ public class User implements Serializable{
         //store class with current uid
         try {
             String uid = FirebaseAuth.getInstance().getUid();
-            UserCopier userCopier = new UserCopier(uid, mSMSReplierRecords, mBlackList, mEContacts, mHistories, mLastKnownLocation, mPermissionSMS, mPermissionGPS, mPermissionCall);
+            UserCopier userCopier = new UserCopier(uid, mSMSReplierRecords, mBlackList, mEContacts, mHistories, mLocationList, mLastKnownLocation, mPermissionSMS, mPermissionGPS, mPermissionCall);
             InternalStorage.writeUserData(context, userCopier);
             MyHelper.toast(context, "Store data done!");
         }
@@ -208,12 +213,24 @@ public class User implements Serializable{
         mBlackList =  FirebaseHelper.downloadUserBlacklist();
         mSMSReplierRecords = FirebaseHelper.downloadUserSMSReplierRecords();
         mEContacts = FirebaseHelper.downloadUserEmergencyContactList();
-        mHistories = new ArrayList<>();
 
-        this.addEmergencyContact(new EContact("Chien","0971096050"));
-        this.addEmergencyContact(new EContact("H.Luon", "0883142564"));
-        this.addEmergencyContact(new EContact("N.Dinh", "0836524253"));
-        this.addEmergencyContact(new EContact("V.Loi",  "0382887809"));
+        mHistories = new ArrayList<>();
+        mLocationList = new ArrayList<>();
+
+        mHistories.add(new HistoryReplySMS("Replied sms", "0971096050", "Dang lam gi v m?", "Tao dang ban, ti nua toi sex goij laij", false));
+        mHistories.add(new HistoryReplySMS("Replied sms", "0971096050", "Dang lam gi v m?", "Tao dang ban, ti nua toi sex goij laij", true));
+        mHistories.add(new HistoryReplySMS("Replied sms", "0971096050", "Dang lam gi v m?", "Tao dang ban, ti nua toi sex goij laij", true));
+        mHistories.add(new HistoryReplySMS("Replied sms", "0971096050", "Dang lam gi v m?", "Tao dang ban, ti nua toi sex goij laij", false));
+        mHistories.add(new HistoryReplySMS("Replied sms", "0971096050", "Dang lam gi v m?", "Tao dang ban, ti nua toi sex goij laij", true));
+        writeHistory(new History("Tracked location:" , false));
+        writeHistory(new History("Tracked location: 1.020122, 12.21323" , true));
+        mHistories.add(new HistoryReplySMS("Replied sms", "0971096050", "Dang lam gi v m?", "Tao dang ban, ti nua toi sex goij laij", false));
+        mHistories.add(new HistoryReplySMS("Replied sms", "0971096050", "Dang lam gi v m?", "Tao dang ban, ti nua toi sex goij laij", true));
+        writeHistory(new History("Tracked location:" , true));
+        writeHistory(new History("Tracked location: 1.021552, 12.21312" , true));
+        mHistories.add(new HistoryReplySMS("Replied sms", "0971096050", "Dang lam gi v m?", "Tao dang ban, ti nua toi sex goij laij", false));
+        mHistories.add(new HistoryReplySMS("Replied sms", "0971096050", "Dang lam gi v m?", "Tao dang ban, ti nua toi sex goij laij", true));
+        mHistories.add(new HistoryReplySMS("Replied sms", "0971096050", "Dang lam gi v m?", "Tao dang ban, ti nua toi sex goij laij", false));
     }
 
     private Location getCurrentLocation() {
@@ -235,6 +252,9 @@ public class User implements Serializable{
 
     public void setCurrentLocation(Location loc) {
         pushLocationToServer();
+        boolean res = loc!=null;
+        writeHistory(new History("Tracked location:" +loc.toString(), res));
+        mLocationList.add(loc);
         this.mLastKnownLocation = loc;
     }
 
@@ -274,9 +294,27 @@ public class User implements Serializable{
         return this.mEContacts;
     }
 
+    public List<SMSReplierRecord> getSmsReplierList(){return this.mSMSReplierRecords;}
+
+    public List<Contact> getBlacklist() {
+        return  this.mBlackList;
+    }
+
     public EContact getEContactByIndex(int index) {
         if(index>=0 && index < mEContacts.size())
             return mEContacts.get(index);
+        return null;
+    }
+
+    public SMSReplierRecord getSmsReplierRecordtByIndex(int index) {
+        if(index>=0 && index < mSMSReplierRecords.size())
+            return mSMSReplierRecords.get(index);
+        return null;
+    }
+
+    public Contact getBlacklistContactByIndex(int index) {
+        if(index>=0 && index < mBlackList.size())
+            return mBlackList.get(index);
         return null;
     }
 
@@ -284,12 +322,22 @@ public class User implements Serializable{
         mEContacts.remove(contact);
     }
 
+    public void deleteSmsReplierSms(SMSReplierRecord mSmsReplier) {
+        mSMSReplierRecords.remove(mSmsReplier);
+    }
+
+    public void deleteBlacklistContact(Contact contact){ mBlackList.remove(contact);}
+
+    public List<History> getHistoryList() {
+        return mHistories;
+    }
+
     public class UserCopier implements Serializable{
         ArrayList<SMSReplierRecord> mSMSReplierRecords;
         ArrayList<Contact> mBlackList; // detect sms and cancel (not reply)
         ArrayList<EContact> mEContacts;
         ArrayList<History> mHistories;
-
+        ArrayList<Location> mLocationList;
         Location mLastKnownLocation; //tracking gps
 
         boolean mPermissionSMS;
@@ -298,20 +346,23 @@ public class User implements Serializable{
 
         String mUid;
 
+
         UserCopier(String uid,
                    ArrayList<SMSReplierRecord> smsReplierRecords,
-                ArrayList<Contact> blackList,
-                ArrayList<EContact> eContacts,
-                ArrayList<History> histories,
-                Location lastKnownLocation,
-                boolean permissionSMS,
-                boolean permissionGPS,
-                boolean permissionCall){
+                   ArrayList<Contact> blackList,
+                   ArrayList<EContact> eContacts,
+                   ArrayList<History> histories,
+                   ArrayList<Location> locationList,
+                   Location lastKnownLocation,
+                   boolean permissionSMS,
+                   boolean permissionGPS,
+                   boolean permissionCall){
             mUid = uid;
             mSMSReplierRecords = smsReplierRecords;
             mBlackList = blackList;
             mEContacts = eContacts;
             mHistories =histories;
+            mLocationList = locationList;
             mLastKnownLocation = lastKnownLocation;
             mPermissionCall = permissionCall;
             mPermissionGPS = permissionGPS;
@@ -320,36 +371,40 @@ public class User implements Serializable{
 
         public String getmUid(){return mUid;}
 
-        public ArrayList<Contact> getmBlackList() {
+        public ArrayList<Contact> getBlackList() {
             return mBlackList;
         }
 
-        public ArrayList<EContact> getmEContacts() {
+        public ArrayList<EContact> getEContacts() {
             return mEContacts;
         }
 
-        public ArrayList<History> getmHistories() {
+        public ArrayList<History> getHistories() {
             return mHistories;
         }
 
-        public ArrayList<SMSReplierRecord> getmSMSReplierRecords() {
+        public List<SMSReplierRecord> getSMSReplierRecords() {
             return mSMSReplierRecords;
         }
 
-        public Location getmLastKnownLocation() {
+        public Location getLastKnownLocation() {
             return mLastKnownLocation;
         }
 
-        public boolean getmPermissionGPS() {
+        public boolean getPermissionGPS() {
             return mPermissionGPS;
         }
 
-        public boolean getmPermissionSMS() {
-            return mPermissionSMS;
+        public boolean getPermissionSMS() {
+            return this.mPermissionSMS;
         }
 
-        public boolean getmPermissionCall() {
+        public boolean getPermissionCall() {
             return mPermissionCall;
+        }
+
+        public ArrayList<Location> getLocaionList() {
+            return this.mLocationList;
         }
     }
 }

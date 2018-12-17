@@ -12,4 +12,5 @@
     <dimen name="size_icon_inside_button">32dp</dimen>
     <dimen name="button_margin">10dp</dimen>
     <dimen name="text_margin">15dp</dimen>
+    <dimen name="econtact_name_item_length">80dp</dimen>
 </resources>

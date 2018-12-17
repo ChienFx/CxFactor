@@ -18,4 +18,8 @@ public class IntentCode {
     public static final int REQUEST_PICK_CONTACT = 9003;
     public static final int REQUEST_EMERGENCY_RECORD = 9004;
     public static final int RESULT_EMERGENC_CONTACT_RECORD = 9005;
+    public static final int REQUEST_SMS_REPLIER_RECORD = 9006;
+    public static final int REQUEST_PICK_TIME_START = 9007;
+    public static final int REQUEST_PICK_TIME_END = 9008;
+    public static final int REQUEST_BLACK_LIST_ITEM = 9009;
 }

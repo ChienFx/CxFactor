@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@color/grey"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/transparent"
+        >
+
+        <TextView
+            android:id="@+id/tvSmsReplierStart"
+            style="@style/listview_item"
+            android:maxLength="5"
+            android:text="00:00"
+            />
+
+        <TextView
+            android:id="@+id/tvSmsReplierEnd"
+            style="@style/listview_item"
+            android:maxLength="5"
+            android:text="23:59"
+            />
+
+        <TextView
+            android:id="@+id/tvSmsReplierMessage"
+            style="@style/listview_item"
+            android:layout_width="match_parent"
+            android:maxLength="25"
+            android:text="I am busy now ahihi my love baby ahi hi  fasfdasfasf"
+            />
+    </LinearLayout>
+    <!--<TextView-->
+        <!--android:id="@+id/tvSmsReplierStart"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="@dimen/text_margin"-->
+        <!--android:textAppearance="?attr/textAppearanceListItem"-->
+        <!--android:text="10:22"-->
+        <!--android:maxLength="5"-->
+        <!--android:maxLines="1"-->
+        <!--android:layout_weight="1"-->
+        <!--/>-->
+    <!--<TextView-->
+        <!--android:id="@+id/tvSmsReplierEnd"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="@dimen/text_margin"-->
+        <!--android:textAppearance="?attr/textAppearanceListItem"-->
+        <!--android:text="22:40"-->
+        <!--android:maxLength="5"-->
+        <!--android:maxLines="1"-->
+        <!--android:layout_weight="1"-->
+        <!--/>-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/tvSmsReplierMessage"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="@dimen/text_margin"-->
+        <!--android:textAppearance="?attr/textAppearanceListItem"-->
+        <!--android:text="I miss you babyy ahihibab asfasfasfaaaa"-->
+        <!--android:maxLength="25"-->
+        <!--android:maxLines="1"-->
+        <!--android:layout_weight="1.5"-->
+        <!--/>-->
+
+</LinearLayout>

@@ -34,7 +34,7 @@ public class TabAdapter extends FragmentStatePagerAdapter {
 
     @Nullable
     @Override
-    /*Show mName name to each tabs*/
+    /*Show mStart name to each tabs*/
     public CharSequence getPageTitle(int position) {
         return mFragmentTitleList.get(position);
     }

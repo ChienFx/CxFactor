@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.EmergencyContactFragment">
+    tools:context=".activities.smsreplier.SmsReplierListActivity">
 
     <LinearLayout
         android:orientation="vertical"
@@ -12,7 +13,7 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:text="Emergency Contacts"
+            android:text="SMS Replier Records"
             style="@style/header_item"
             />
         <LinearLayout
@@ -23,40 +24,41 @@
             >
 
             <TextView
-                android:id="@+id/tvEmergencyContactName"
                 style="@style/listview_header_item"
-                android:text="Name"
+                android:text="Start"
                 />
 
             <TextView
-                android:id="@+id/tvEmergencyContactNumber"
                 style="@style/listview_header_item"
-                android:text="Number"
+                android:text="End"
                 />
 
             <TextView
-                android:id="@+id/tvEmergencyContactContent"
                 style="@style/listview_header_item"
+                android:layout_width="match_parent"
                 android:text="Message"
                 />
         </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerViewEContactFr"
+            android:id="@+id/recyclerViewSmsReplier"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@layout/fragment_emergencycontact"
-            android:layout_weight="8"
-            />
+            android:scrollbars="vertical" />
 
     </LinearLayout>
+
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/fabAddSmsReplierRecord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         app:backgroundTint="@color/colorAccent"
-        app:srcCompat="@android:drawable/ic_input_add"
-        />
-</FrameLayout>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@android:drawable/ic_input_add" />
+
+</android.support.constraint.ConstraintLayout >

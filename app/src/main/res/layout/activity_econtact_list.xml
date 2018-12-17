@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.econtact.EContactListActivity">
+
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -23,31 +24,26 @@
                 >
 
                 <TextView
-                    android:id="@+id/tvEmergencyContactName"
-                    style="@style/listview_header_item"
+                    style="@style/listview_econtact_item"
+                    android:layout_width="@dimen/econtact_name_item_length"
+                    android:textStyle="bold"
                     android:text="Name"
                     />
 
                 <TextView
-                    android:id="@+id/tvEmergencyContactNumber"
-                    style="@style/listview_header_item"
+                    style="@style/listview_econtact_item"
+                    android:textStyle="bold"
                     android:text="Number"
                     />
 
                 <TextView
-                    android:id="@+id/tvEmergencyContactContent"
-                    style="@style/listview_header_item"
+                    style="@style/listview_econtact_item"
+                    android:textStyle="bold"
+                    android:layout_width="match_parent"
                     android:text="Message"
                     />
             </LinearLayout>
 
-            <!--<android.support.v7.widget.RecyclerView-->
-                <!--android:id="@+id/listEmergencyContact"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"-->
-                <!--tools:listitem="@layout/fragment_emergencycontact"-->
-                <!--android:layout_weight="8"-->
-                <!--/>-->
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerViewEContact"
                 android:layout_width="match_parent"

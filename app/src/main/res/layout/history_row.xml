@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/tvHistoryAction"
+        android:layout_marginTop="5dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Replied SMS"
+        android:textStyle="bold"
+        />
+    <TextView
+        android:id="@+id/tvHistoryFrom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text="From:"/>
+    <TextView
+        android:id="@+id/tvHistoryIncome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:lines="1"
+        android:text="Income Message:"/>
+    <TextView
+        android:id="@+id/tvHistoryReply"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:lines="1"
+        android:text="Reply Message:"
+        />
+    <TextView
+        android:id="@+id/tvHistoryTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text="2018-12-02 18:02:00"
+        android:gravity="end"
+        android:textStyle="italic"
+        />
+</LinearLayout>

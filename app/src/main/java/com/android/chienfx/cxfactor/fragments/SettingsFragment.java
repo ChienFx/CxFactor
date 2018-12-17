@@ -20,7 +20,10 @@ import com.android.chienfx.core.Definition;
 import com.android.chienfx.core.user.User;
 import com.android.chienfx.cxfactor.R;
 import com.android.chienfx.cxfactor.activities.MainActivity;
+import com.android.chienfx.cxfactor.activities.blacklist.BlacklistActivity;
 import com.android.chienfx.cxfactor.activities.econtact.EContactListActivity;
+import com.android.chienfx.cxfactor.activities.smsreplier.SmsReplierItemActivity;
+import com.android.chienfx.cxfactor.activities.smsreplier.SmsReplierListActivity;
 
 import static com.android.chienfx.cxfactor.activities.MainActivity.CURRENT_TAG;
 
@@ -123,6 +126,20 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getContext(), EContactListActivity.class));
+            }
+        });
+
+        imbtnSmsReplier.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), SmsReplierListActivity.class));
+            }
+        });
+
+        imbtnBlaclist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), BlacklistActivity.class));
             }
         });
     }

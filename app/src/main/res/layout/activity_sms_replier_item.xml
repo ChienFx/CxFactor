@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="20dp"
+    tools:context=".activities.smsreplier.SmsReplierItemActivity">
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        >
+        <TextView
+            style="@style/table_item_style"
+            android:text="Time Start"
+            />
+
+        <EditText
+            android:id="@+id/edSmsReplierTimeStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border"
+            android:lines="1"
+            android:maxLength="5"
+            android:padding="5dp"
+            android:layout_margin="5dp"
+            android:editable="false"
+            android:text="05:22"
+            android:layout_weight="1"
+            android:gravity="center"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        >
+        <TextView
+            style="@style/table_item_style"
+            android:text="Time End"
+            />
+
+        <EditText
+            android:id="@+id/edSmsReplierTimeEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border"
+            android:lines="1"
+            android:maxLength="5"
+            android:padding="5dp"
+            android:layout_margin="5dp"
+            android:editable="false"
+            android:text="05:22"
+            android:layout_weight="1"
+            android:gravity="center"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        >
+        <TextView
+            style="@style/table_item_style"
+            android:text="Message"
+            android:layout_marginRight="60dp"
+            />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            >
+            <ImageButton
+                android:id="@+id/btnSmsReplierItemSave"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_check_48"
+                android:layout_gravity="center"
+                android:layout_marginLeft="5dp"
+                />
+            <ImageButton
+                android:id="@+id/btnSmsReplierItemDel"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_recycle_48"
+                android:layout_marginLeft="5dp"
+                />
+        </LinearLayout>
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/edSmsreplierItemMessage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/border"
+        android:lines="15"
+        android:layout_column="0"
+        android:text="chienpham304"
+        android:padding="5dp"
+        android:gravity="top"
+        android:layout_marginTop="10dp"
+        />
+
+</LinearLayout>

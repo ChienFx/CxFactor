@@ -1,4 +1,4 @@
-package com.android.chienfx.cxfactor.activities.econtact;
+package com.android.chienfx.cxfactor.activities.smsreplier;
 
 import android.content.Intent;
 import android.support.annotation.Nullable;
@@ -11,33 +11,35 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.android.chienfx.core.IntentCode;
-import com.android.chienfx.core.contact.EContact;
+import com.android.chienfx.core.sms.SMSReplierRecord;
 import com.android.chienfx.core.user.User;
 import com.android.chienfx.cxfactor.R;
 import com.android.chienfx.cxfactor.activities.RecyclerTouchListener;
+import com.android.chienfx.cxfactor.activities.econtact.EContactItemActivity;
 
 import java.util.List;
 
-public class EContactListActivity extends AppCompatActivity {
+public class SmsReplierListActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private EContactAdapter mAdapter;
-    private List<EContact> mEContacts;
+    private SmsReplierAdapter mAdapter;
+    private List<SMSReplierRecord> mSmsReliers;
     private FloatingActionButton fab;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_econtact_list);
+        setContentView(R.layout.activity_sms_replier_list);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        fab = findViewById(R.id.fabAddRecord);
+        fab = findViewById(R.id.fabAddSmsReplierRecord);
 
-        recyclerView = findViewById(R.id.recyclerViewEContact);
+        recyclerView = findViewById(R.id.recyclerViewSmsReplier);
 
-        mEContacts = User.getInstance().getEmergencyContactList();
+        mSmsReliers = User.getInstance().getSmsReplierList();
 
-        mAdapter = new EContactAdapter(mEContacts);
+        mAdapter = new SmsReplierAdapter(mSmsReliers);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
 
@@ -49,7 +51,7 @@ public class EContactListActivity extends AppCompatActivity {
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                startEContactItemActivity(position);
+                startSmsReplierItemActivity(position);
             }
 
             @Override
@@ -61,21 +63,21 @@ public class EContactListActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startEContactItemActivity(-1);
+                startSmsReplierItemActivity(-1);
             }
         });
     }
 
-    public void startEContactItemActivity(int position) {
-        Intent intent = new Intent(getApplicationContext(), EContactItemActivity.class);
+    public void startSmsReplierItemActivity(int position) {
+        Intent intent = new Intent(getApplicationContext(), SmsReplierItemActivity.class);
         intent.putExtra("position", position);
-        startActivityForResult(intent, IntentCode.REQUEST_EMERGENCY_RECORD);
+        startActivityForResult(intent, IntentCode.REQUEST_SMS_REPLIER_RECORD);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == IntentCode.REQUEST_EMERGENCY_RECORD){
+        if(requestCode == IntentCode.REQUEST_SMS_REPLIER_RECORD){
             mAdapter.notifyDataSetChanged();
         }
     }

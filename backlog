@@ -29,6 +29,32 @@ Người dừng có thể tắt các permission bất kì lúc nào bằng cách
 + handle fragment stack
 
 
+--TESTING
++ Verification: kiểm tra xem chúng ta có làm ra sp đúng vs đặc tả hay không.
++ Validation: kiểm tra xem sản phẩm có đúng với những gì mà khách hàng thật sự mong muốn không?
+
+-> Tiến trình V&V
++Phát hiện các lỗi trong hệ thống
++ đánh gái hệ thống có hợp lí và đpá ứng đúng yêu cầu cho việc sử dungh hay không
++ xác định được độ tin cậy của sp so với mục tiêu ban đầu.
++ Khong đmả bảo là hệ thosng sẽ không còn lỗi mà nó cho thấy được mwucs độ đáp ứng của sp là đủ tốt cho việc sử dụng.
+
+- Verification tĩnh và động
++ Software inspections: (kiểm tra tĩnh) thanh tra giám sát, phân tích hệ thống tìm ra lỗi hệ thống, không chạy chương tình, chỉ thanh tra các khối mã lệnh.
+    Ưu điểm: phát hiện những lỗi lồng nhau nơi mà test động phải pass chỗ này mới test được chỗ khác
+    Phát hiện nhwunxg lỗi thường xảy ra đối với những công việc đặc thù (code cái này dễ bị lỗi này....)
+
++ Software testing: (kiểm tra động) cho chạy chương trình test kết quả, liên qua đến việc thực thi hệ thống và xem xét sự hoạt ododngj của hệ thống. Không đảm nảo chỉ ra hết các lỗi.
+    Là kĩ thuật duy nhất để kiểm tra các yêu cầu phi chức năng (vd: chức năng này phải chjay dưới một giây).
+
+
+-> V-Model
+- từ khi có yêu cầ đã có giai đoạn test
+- chạy xong xong giữa team dev và test
+
+* Test automation
+
+
 - open gps setting in setting activity
 //    boolean isGpsEnabled(){
 //        LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);

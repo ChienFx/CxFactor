@@ -1,16 +1,25 @@
 package com.android.chienfx.core.sms;
 
+import com.android.chienfx.core.Definition;
+import com.android.chienfx.core.helper.MyHelper;
+
 import java.io.Serializable;
 
 public class SMSReplierRecord implements Serializable {
-    int mStart;      //04:22
-    int mEnd;        //23:59
-    String mMessage;
+    public int mStart;      //04:22
+    public int mEnd;        //23:59
+    public String mMessage;
 
     public SMSReplierRecord(int start, int end, String message) {
         this.mStart = start;
         this.mEnd = end;
         this.mMessage = message;
+    }
+
+    public SMSReplierRecord() {
+        mStart = 0;     //00:00
+        mEnd = 1439;    //23:59
+        mMessage = Definition.SMS_REPLIER_MESSAGE_BUSY;
     }
 
     public boolean checkInRangeTime(int tNow) {
@@ -24,16 +33,16 @@ public class SMSReplierRecord implements Serializable {
     }
 
     public String getTimeStart(){
-        return getTimeString(mStart);
+        return MyHelper.getTimeString(mStart);
     }
     public String getTimeEnd(){
-        return getTimeString(mEnd);
+        return MyHelper.getTimeString(mEnd);
     }
     public String getMessage(){
         return mMessage;
     }
+    public int getIStart(){return  mStart;}
+    public int getIEnd(){return  mEnd;}
 
-    private String getTimeString(int t){
-        return String.valueOf(t/60) + String.valueOf(t%60);
-    }
+
 }

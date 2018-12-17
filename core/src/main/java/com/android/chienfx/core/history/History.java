@@ -4,6 +4,7 @@ import android.text.format.Time;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 
 public class History implements Serializable {
@@ -22,16 +23,15 @@ public class History implements Serializable {
 
 
     public History(String action, boolean result) {
-        Date date = new Date();
-
-        mTimeStamp = date.getTime();
+        Calendar calendar = Calendar.getInstance();
+        mTimeStamp = calendar.getTimeInMillis();
         mAction = action;
         mResult = result;
     }
-    public String getTimeStampString(){
+    public String getStringTimeStamp(){
         Timestamp ts = new Timestamp(mTimeStamp);
         return ts.toString();
     }
-    public long getmTimeStamp(){return mTimeStamp;}
-    public String getAction(){return mAction;}
+    public boolean getResult(){return mResult;}
+    public String getStringAction(){return mAction;}
 }

@@ -5,8 +5,8 @@ public class HistoryReplySMS extends History {
     String mIncomeMessage;
     String mReplyMessage;
 
-    public HistoryReplySMS(String sender, String incomeSMS, String replySMS, boolean result) {
-        super(History.HISTORY_ACTION_REPLY_SMS, result);
+    public HistoryReplySMS(String action, String sender, String incomeSMS, String replySMS, boolean result) {
+        super(action, result);
         this.mSender = sender;
         this.mIncomeMessage = incomeSMS;
         this.mReplyMessage = replySMS;

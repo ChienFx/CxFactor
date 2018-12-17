@@ -1,4 +1,4 @@
-package com.android.chienfx.cxfactor.activities.econtact;
+package com.android.chienfx.cxfactor.activities;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

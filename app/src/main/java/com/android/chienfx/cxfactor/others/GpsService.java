@@ -9,14 +9,15 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.android.chienfx.core.helper.MyHelper;
 import com.android.chienfx.core.user.User;
 
 public class GpsService extends Service
 {
     private static final String TAG = "GPS Service";
     private LocationManager mLocationManager = null;
-    private static final int LOCATION_INTERVAL = 1000; // in millisecond
-    private static final float LOCATION_DISTANCE = 0f;   //1 metter
+    private static final int LOCATION_INTERVAL = 10000; // in millisecond
+    private static final float LOCATION_DISTANCE = 0.3f;   //1 metter
 
     private class LocationListener implements android.location.LocationListener
     {
@@ -34,7 +35,9 @@ public class GpsService extends Service
             Log.e(TAG, "onLocationChanged: " + location);
             mLastLocation.set(location);
             User.getInstance().setCurrentLocation(mLastLocation);
+
             Log.i(TAG, "LocationChanged: "+location);
+            MyHelper.toast(getApplicationContext(),"Tracked location: "+location);
         }
 
         @Override
