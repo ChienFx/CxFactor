@@ -153,4 +153,6 @@
     <string name="find_my_phone">Find my phone</string>
     <string name="decline_calls">Decline Calls</string>
     <string name="auto_reply_sms">Auto reply SMS</string>
+    <string name="title_activity_maps">Find My Phone</string>
+    <string name="go"><u><b><![CDATA[>> Go >>]]></b></u></string>
 </resources>

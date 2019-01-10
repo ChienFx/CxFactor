@@ -10,8 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
-import com.android.chienfx.core.Definition;
-import com.android.chienfx.core.helper.MyHelper;
+import com.android.chienfx.cxfactor.core.Definition;
+import com.android.chienfx.cxfactor.core.helper.MyHelper;
 import com.android.chienfx.cxfactor.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

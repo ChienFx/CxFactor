@@ -15,10 +15,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import com.android.chienfx.core.IntentCode;
-import com.android.chienfx.core.contact.EContact;
-import com.android.chienfx.core.helper.MyHelper;
-import com.android.chienfx.core.user.User;
+import com.android.chienfx.cxfactor.core.IntentCode;
+import com.android.chienfx.cxfactor.core.contact.EContact;
+import com.android.chienfx.cxfactor.core.helper.MyHelper;
+import com.android.chienfx.cxfactor.core.user.User;
 import com.android.chienfx.cxfactor.R;
 
 public class EContactItemActivity extends AppCompatActivity {

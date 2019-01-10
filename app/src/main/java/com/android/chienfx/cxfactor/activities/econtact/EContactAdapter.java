@@ -6,8 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.android.chienfx.core.contact.EContact;
-import com.android.chienfx.core.helper.MyHelper;
+import com.android.chienfx.cxfactor.core.contact.EContact;
+import com.android.chienfx.cxfactor.core.helper.MyHelper;
 import com.android.chienfx.cxfactor.R;
 
 import java.util.List;

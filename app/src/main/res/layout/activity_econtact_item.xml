@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="20dp"
+    tools:context=".activities.econtact.EContactItemActivity">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        >
+        <TextView
+            style="@style/table_item_style"
+            android:text="Contact"
+            android:layout_weight="1"
+            />
+
+        <EditText
+            android:id="@+id/edContact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border"
+            android:lines="2"
+            android:maxLength="25"
+            android:padding="5dp"
+            android:layout_margin="5dp"
+            android:editable="false"
+            android:text="Chienfx\n+84971096050"
+            android:layout_weight="1"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        >
+
+        <TextView
+            style="@style/table_item_style"
+            android:layout_width="wrap_content"
+            android:text="Send Location"
+            android:layout_marginRight="20dp"
+            />
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/cbLoction"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        >
+        <TextView
+            style="@style/table_item_style"
+            android:text="Message"
+            android:layout_marginRight="60dp"
+            />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity=""
+            >
+            <ImageButton
+                android:id="@+id/btnSave"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_check_48"
+                android:layout_gravity="center"
+                android:layout_marginLeft="5dp"
+                />
+            <ImageButton
+                android:id="@+id/btnDel"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_recycle_48"
+                android:layout_marginLeft="5dp"
+                />
+    </LinearLayout>
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/edMessage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/border"
+        android:lines="15"
+        android:layout_column="0"
+        android:text="chienpham304"
+        android:padding="5dp"
+        android:gravity="top"
+        android:layout_marginTop="10dp"
+        />
+
+</LinearLayout>

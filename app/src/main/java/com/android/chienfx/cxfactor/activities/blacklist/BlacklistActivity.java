@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -16,13 +15,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.android.chienfx.core.IntentCode;
-import com.android.chienfx.core.contact.Contact;
-import com.android.chienfx.core.helper.MyHelper;
-import com.android.chienfx.core.user.User;
+import com.android.chienfx.cxfactor.core.IntentCode;
+import com.android.chienfx.cxfactor.core.contact.Contact;
+import com.android.chienfx.cxfactor.core.user.User;
 import com.android.chienfx.cxfactor.R;
 import com.android.chienfx.cxfactor.activities.RecyclerTouchListener;
-import com.android.chienfx.cxfactor.activities.smsreplier.SmsReplierItemActivity;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -7,8 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.android.chienfx.core.history.History;
-import com.android.chienfx.core.history.HistoryReplySMS;
+import com.android.chienfx.cxfactor.core.history.History;
+import com.android.chienfx.cxfactor.core.history.HistoryReplySMS;
 import com.android.chienfx.cxfactor.R;
 
 import java.util.List;
@@ -53,22 +53,26 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.MyViewHo
         holder.mTime.setText(history.getStringTimeStamp());
 
         if(history instanceof HistoryReplySMS){
+            holder.mIncome.setVisibility(View.VISIBLE);
+            holder.mFrom.setVisibility(View.VISIBLE);
+            holder.mReply.setVisibility(View.VISIBLE);
+
             holder.mIncome.setText("Income message: "+((HistoryReplySMS) history).getIncomeMessage());
             holder.mFrom.setText("From: "+((HistoryReplySMS) history).getSender());
             holder.mReply.setText("Reply message: "+((HistoryReplySMS) history).getReplyMessage());
         }
         else{
-            holder.mIncome.setText("");
-            holder.mFrom.setText("");
-            holder.mReply.setText("");
+            holder.mIncome.setVisibility(View.GONE);
+            holder.mFrom.setVisibility(View.GONE);
+            holder.mReply.setVisibility(View.GONE);
         }
 
         if(history.getResult() == false) {
-            holder.mAction.setBackgroundColor(R.color.red);
+            //holder.mAction.setBackgroundColor(R.color.red);
             holder.mAction.setText(history.getStringAction()+" [Failed]");
         }
         else {
-            holder.mAction.setBackgroundColor(R.color.colorPrimary);
+            //holder.mAction.setBackgroundColor(R.color.colorPrimary);
             holder.mAction.setText(history.getStringAction()+" [Done]");
         }
     }

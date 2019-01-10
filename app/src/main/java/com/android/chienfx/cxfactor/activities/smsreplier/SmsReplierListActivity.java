@@ -10,12 +10,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.android.chienfx.core.IntentCode;
-import com.android.chienfx.core.sms.SMSReplierRecord;
-import com.android.chienfx.core.user.User;
+import com.android.chienfx.cxfactor.core.IntentCode;
+import com.android.chienfx.cxfactor.core.sms.SMSReplierRecord;
+import com.android.chienfx.cxfactor.core.user.User;
 import com.android.chienfx.cxfactor.R;
 import com.android.chienfx.cxfactor.activities.RecyclerTouchListener;
-import com.android.chienfx.cxfactor.activities.econtact.EContactItemActivity;
 
 import java.util.List;
 

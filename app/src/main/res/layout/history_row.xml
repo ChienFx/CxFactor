@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:text="Replied SMS"
         android:textStyle="bold"
+        android:textAppearance="?attr/textAppearanceListItem"
         />
     <TextView
         android:id="@+id/tvHistoryFrom"

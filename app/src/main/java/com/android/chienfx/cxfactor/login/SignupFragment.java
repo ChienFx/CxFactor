@@ -13,11 +13,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.android.chienfx.core.Definition;
-import com.android.chienfx.core.helper.MyHelper;
+import com.android.chienfx.cxfactor.core.Definition;
+import com.android.chienfx.cxfactor.core.helper.MyHelper;
 import com.android.chienfx.cxfactor.R;
 
 @SuppressLint("ValidFragment")

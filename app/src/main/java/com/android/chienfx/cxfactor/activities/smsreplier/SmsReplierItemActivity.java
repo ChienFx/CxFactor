@@ -3,9 +3,6 @@ package com.android.chienfx.cxfactor.activities.smsreplier;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,12 +14,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TimePicker;
 
-import com.android.chienfx.core.IntentCode;
-import com.android.chienfx.core.helper.MyHelper;
-import com.android.chienfx.core.sms.SMSReplierRecord;
-import com.android.chienfx.core.user.User;
+import com.android.chienfx.cxfactor.core.helper.MyHelper;
+import com.android.chienfx.cxfactor.core.sms.SMSReplierRecord;
+import com.android.chienfx.cxfactor.core.user.User;
 import com.android.chienfx.cxfactor.R;
-import com.android.chienfx.cxfactor.activities.econtact.EContactItemActivity;
 
 import java.util.Calendar;
 

@@ -38,7 +38,7 @@
         <activity android:name=".login.ResetPasswordActivity" />
 
         <receiver
-            android:name="com.android.chienfx.core.reveiver.SmsBroadcastReceiver"
+            android:name=".core.reveiver.SmsBroadcastReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter android:priority="1000">
@@ -47,7 +47,7 @@
         </receiver>
 
         <service
-            android:name="com.android.chienfx.core.services.SMSReceiveService"
+            android:name=".core.services.SMSReceiveService"
             android:enabled="true"
             android:exported="true" />
         <service
@@ -56,7 +56,7 @@
             android:exported="true" />
 
         <receiver
-            android:name="com.android.chienfx.core.reveiver.BootBroadcast"
+            android:name=".core.reveiver.BootBroadcast"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -94,6 +94,22 @@
         <activity android:name=".activities.smsreplier.SmsReplierListActivity" />
         <activity android:name=".activities.smsreplier.SmsReplierItemActivity" />
         <activity android:name=".activities.blacklist.BlacklistActivity" />
+        <activity android:name=".activities.WaitingLocationActivity" />
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity
+            android:name=".activities.findmyphone.MapsActivity"
+            android:label="@string/title_activity_maps"></activity>
     </application>
 
 </manifest>

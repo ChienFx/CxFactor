@@ -9,11 +9,10 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
-import com.android.chienfx.core.IntentCode;
-import com.android.chienfx.core.helper.MyHelper;
+import com.android.chienfx.cxfactor.core.IntentCode;
+import com.android.chienfx.cxfactor.core.helper.MyHelper;
 import com.android.chienfx.cxfactor.R;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;

@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,16 +15,11 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 
-import com.android.chienfx.core.Definition;
-import com.android.chienfx.core.user.User;
+import com.android.chienfx.cxfactor.core.user.User;
 import com.android.chienfx.cxfactor.R;
-import com.android.chienfx.cxfactor.activities.MainActivity;
 import com.android.chienfx.cxfactor.activities.blacklist.BlacklistActivity;
 import com.android.chienfx.cxfactor.activities.econtact.EContactListActivity;
-import com.android.chienfx.cxfactor.activities.smsreplier.SmsReplierItemActivity;
 import com.android.chienfx.cxfactor.activities.smsreplier.SmsReplierListActivity;
-
-import static com.android.chienfx.cxfactor.activities.MainActivity.CURRENT_TAG;
 
 /**
  * A simple {@link Fragment} subclass.

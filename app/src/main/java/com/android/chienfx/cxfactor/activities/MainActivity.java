@@ -27,11 +27,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.chienfx.core.Definition;
-import com.android.chienfx.core.IntentCode;
-import com.android.chienfx.core.helper.MyHelper;
-import com.android.chienfx.core.services.SMSReceiveService;
-import com.android.chienfx.core.user.User;
+import com.android.chienfx.cxfactor.core.Definition;
+import com.android.chienfx.cxfactor.core.IntentCode;
+import com.android.chienfx.cxfactor.core.helper.MyHelper;
+import com.android.chienfx.cxfactor.core.services.SMSReceiveService;
+import com.android.chienfx.cxfactor.core.user.User;
 import com.android.chienfx.cxfactor.R;
 import com.android.chienfx.cxfactor.fragments.HomeFragment;
 import com.android.chienfx.cxfactor.fragments.history.NotificationsFragment;
@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         //load user data
+        loadUserData();
         super.onResume();
     }
 

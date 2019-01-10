@@ -14,16 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.android.chienfx.core.Definition;
-import com.android.chienfx.core.helper.MyHelper;
+import com.android.chienfx.cxfactor.core.Definition;
+import com.android.chienfx.cxfactor.core.helper.MyHelper;
 import com.android.chienfx.cxfactor.R;
-import com.facebook.login.LoginManager;
-
-import java.util.Arrays;
 
 @SuppressLint("ValidFragment")
 public class LoginFragment extends Fragment implements View.OnClickListener {

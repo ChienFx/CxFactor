@@ -14,10 +14,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.android.chienfx.core.helper.MyHelper;
-import com.android.chienfx.core.user.User;
+import com.android.chienfx.cxfactor.activities.MainActivity;
+import com.android.chienfx.cxfactor.activities.WaitingLocationActivity;
+import com.android.chienfx.cxfactor.activities.findmyphone.MapsActivity;
+import com.android.chienfx.cxfactor.core.helper.MyHelper;
+import com.android.chienfx.cxfactor.core.user.User;
 import com.android.chienfx.cxfactor.R;
 import com.android.chienfx.cxfactor.activities.econtact.EContactListActivity;
+import com.google.android.gms.maps.model.LatLng;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -129,17 +133,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.btn_whereiwas:
-                AlertDialog.Builder builderF = new AlertDialog.Builder(getActivity());
-                builderF.setTitle("Fossick");
-                builderF.setMessage("Fossick module is in development phase.\nComing Soon");
-                builderF.setPositiveButton(R.string.action_ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-
-                    }
-                });
-                builderF.show();
+                Intent intent = new Intent(getContext(), WaitingLocationActivity.class);
+                startActivity(intent);
                 break;
 
         }
